@@ -294,7 +294,7 @@
 
   /* ---------- table ---------- */
   .table-wrap{overflow-x:auto;padding:6px 8px 16px;}
-  table{width:100%;border-collapse:collapse;min-width:980px;}
+  table{width:100%;border-collapse:collapse;min-width:1060px;}
   thead th{
     text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-dim);font-weight:500;
@@ -610,6 +610,7 @@
         <button class="chip active" data-tab="trend">Trend K/D</button>
         <button class="chip" data-tab="maps">Podle mapy</button>
         <button class="chip" data-tab="classes">Podle třídy</button>
+        <button class="chip" data-tab="modes">Podle módu</button>
       </div>
     </div>
 
@@ -623,6 +624,9 @@
     </div>
     <div class="stats-tab-content" id="tabClasses" style="display:none;">
       <div class="leaderboard-list" id="classStatsList" style="padding:14px 12px 20px;"></div>
+    </div>
+    <div class="stats-tab-content" id="tabModes" style="display:none;">
+      <div class="leaderboard-list" id="modeStatsList" style="padding:14px 12px 20px;"></div>
     </div>
   </section>
 
@@ -656,6 +660,7 @@
             <button class="chip" data-result="loss">Prohry</button>
           </div>
           <select class="filter-select" id="mapFilter"></select>
+          <select class="filter-select" id="modeFilter"></select>
           <select class="filter-select" id="weaponFilter"><option value="">Všechny zbraně</option></select>
         </div>
       </div>
@@ -680,6 +685,7 @@
             <tr>
               <th data-key="weapon">Zbraň <span class="arrow">▾</span></th>
               <th data-key="class">Třída <span class="arrow">▾</span></th>
+              <th data-key="mode">Mód <span class="arrow">▾</span></th>
               <th data-key="map">Mapa <span class="arrow">▾</span></th>
               <th data-key="result">Výsledek <span class="arrow">▾</span></th>
               <th data-key="fullStack">Stack <span class="arrow">▾</span></th>
@@ -754,6 +760,10 @@
       <select id="seasonField"></select>
     </div>
     <div class="field">
+      <label for="modeField">Herní mód</label>
+      <select id="modeField"></select>
+    </div>
+    <div class="field">
       <label for="weaponSelect">Zbraň</label>
       <select id="weaponSelect"></select>
       <div class="field-hint" id="weaponHint"></div>
@@ -776,8 +786,8 @@
         <button type="button" class="chip stack-chip" data-stack="solo">Solo/Duo queue</button>
       </div>
     </div>
-    <div class="field">
-      <label>Kolo (Cashout, volitelné)</label>
+    <div class="field" id="roundField">
+      <label>Kolo (volitelné)</label>
       <div class="chips" id="roundChips">
         <button type="button" class="chip round-chip" data-round="1">Kolo 1</button>
         <button type="button" class="chip round-chip" data-round="2">Kolo 2</button>
@@ -878,6 +888,18 @@
   }
   rebuildCatalog();
 
+  // game modes - "rounds" marks the modes that are played as a 3-round tournament
+  var MODES = [
+    { id: "Cashout", rounds: true }, { id: "Ranked Cashout", rounds: true }, { id: "Cashout (Bots)", rounds: true },
+    { id: "Quick Cash", rounds: false }, { id: "Point Break", rounds: false }, { id: "Power Shift", rounds: false },
+    { id: "Team Deathmatch", rounds: false }, { id: "Solo Showdown", rounds: true }, { id: "Jiný mód", rounds: false }
+  ];
+  var MODE_IDS = MODES.map(function(m){ return m.id; });
+  var MODE_ROUNDS = {};
+  MODES.forEach(function(m){ MODE_ROUNDS[m.id] = m.rounds; });
+  // entries saved before modes existed were all Cashout
+  function modeOf(e){ return (e.mode && MODE_ROUNDS.hasOwnProperty(e.mode)) ? e.mode : "Cashout"; }
+
   function esc(s){
     return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
   }
@@ -940,6 +962,7 @@
     tableSort: { key: "ts", dir: "desc" },
     resultFilter: "",
     mapFilter: "",
+    modeFilter: "",
     shown: 25,
     lastSig: ""
   };
@@ -1132,6 +1155,8 @@
       value:function(s){ return Math.min(s.distinctMaps, REAL_MAPS_COUNT); } },
     { id:"squad_goals", title:"Plný stack", desc:"10 zápasů ve full stacku.", target:10,
       value:function(s){ return Math.min(s.fullStackCount, 10); } },
+    { id:"all_rounder", title:"Všestranný", desc:"Zahraj 5 různých herních módů.", target:5,
+      value:function(s){ return Math.min(s.distinctModes, 5); } },
     { id:"sharpshooter", title:"Ostrostřelec", desc:"K/D 3.0+ v jednom zápase (min. 5 killů).", target:1,
       value:function(s){ return s.bestSingleKD >= 3 ? 1 : 0; } },
     { id:"marathoner", title:"Maratonec", desc:"Zaznamenej všechna 3 kola jednoho Cashout zápasu.", target:1,
@@ -1140,13 +1165,14 @@
 
   function computeAchievementStats(){
     var totalKills=0, totalAssists=0, aces=0, fullStackCount=0;
-    var weaponMatches = {}, mapsSet = {}, byMatch = {};
+    var weaponMatches = {}, mapsSet = {}, byMatch = {}, modesSet = {};
 
     entries.forEach(function(e){
       totalKills += e.kills;
       totalAssists += e.assists;
       if (e.kills > 0 && e.deaths === 0) aces++;
       if (e.fullStack === "full") fullStackCount++;
+      modesSet[modeOf(e)] = true;
       weaponMatches[e.weapon] = (weaponMatches[e.weapon] || 0) + 1;
       if (e.map && ACH_MAPS.indexOf(e.map) !== -1) mapsSet[e.map] = true;
       if (e.matchId && e.round){
@@ -1181,7 +1207,7 @@
     return {
       totalKills: totalKills, totalAssists: totalAssists, totalMatches: entries.length,
       aces: aces, fullStackCount: fullStackCount, maxWeaponMatches: maxWeaponMatches,
-      distinctMaps: Object.keys(mapsSet).length, hasFullCashout: hasFullCashout,
+      distinctMaps: Object.keys(mapsSet).length, distinctModes: Object.keys(modesSet).length, hasFullCashout: hasFullCashout,
       bestWinStreak: bestWinStreak, bestSingleKD: bestSingleKD
     };
   }
@@ -1327,9 +1353,11 @@
     document.getElementById("tabTrend").style.display = statsTab === "trend" ? "block" : "none";
     document.getElementById("tabMaps").style.display = statsTab === "maps" ? "block" : "none";
     document.getElementById("tabClasses").style.display = statsTab === "classes" ? "block" : "none";
+    document.getElementById("tabModes").style.display = statsTab === "modes" ? "block" : "none";
     if (statsTab === "trend") renderTrendChart();
     else if (statsTab === "maps") renderGroupStats("mapStatsList", aggregateBy(function(e){ return e.map; }));
-    else renderGroupStats("classStatsList", aggregateBy(function(e){ return e.class; }), ["Light","Medium","Heavy"]);
+    else if (statsTab === "classes") renderGroupStats("classStatsList", aggregateBy(function(e){ return e.class; }), ["Light","Medium","Heavy"]);
+    else renderGroupStats("modeStatsList", aggregateBy(function(e){ return modeOf(e); }), MODE_IDS);
   }
 
   document.getElementById("statsTabChips").addEventListener("click", function(ev){
@@ -1418,6 +1446,7 @@
       if (state.weaponFilter && e.weapon !== state.weaponFilter) return false;
       if (state.resultFilter && e.result !== state.resultFilter) return false;
       if (state.mapFilter && e.map !== state.mapFilter) return false;
+      if (state.modeFilter && modeOf(e) !== state.modeFilter) return false;
       return true;
     });
   }
@@ -1425,7 +1454,7 @@
   function renderTable(){
     var rows = filteredEntries().map(function(e){
       return {
-        id:e.id, weapon:e.weapon, class:e.class,
+        id:e.id, weapon:e.weapon, class:e.class, mode: modeOf(e),
         map: e.map || "", result: e.result || "", fullStack: e.fullStack || "",
         round: e.round || "", matchId: e.matchId || "",
         kills:e.kills, deaths:e.deaths, assists:e.assists,
@@ -1441,7 +1470,7 @@
       return 0;
     });
 
-    var sig = [state.classFilter, state.weaponFilter, state.mapFilter, state.resultFilter, seasonData.view, key, dir].join("|");
+    var sig = [state.classFilter, state.weaponFilter, state.mapFilter, state.modeFilter, state.resultFilter, seasonData.view, key, dir].join("|");
     if (sig !== state.lastSig){ state.shown = 25; state.lastSig = sig; }
     var totalRows = rows.length;
     var hiddenRows = Math.max(0, totalRows - state.shown);
@@ -1475,6 +1504,7 @@
       tr.innerHTML =
         '<td data-label="Zbraň">'+esc(r.weapon)+'</td>'+
         '<td data-label="Třída"><span class="class-pill '+r.class+'">'+r.class+'</span></td>'+
+        '<td class="map-cell" data-label="Mód">'+esc(r.mode)+'</td>'+
         '<td class="map-cell" data-label="Mapa">'+esc(r.map || "—")+'</td>'+
         '<td data-label="Výsledek">'+resultHtml+'</td>'+
         '<td data-label="Stack">'+stackHtml+'</td>'+
@@ -1717,6 +1747,8 @@
     currentMatchId = null;
     document.getElementById("inNote").value = "";
     buildSeasonField(typeof seasonData.view === "number" ? seasonData.view : seasonData.current);
+    var lastMode = getLastForm().mode;
+    document.getElementById("modeField").value = MODE_ROUNDS.hasOwnProperty(lastMode) ? lastMode : "Cashout";
     document.getElementById("modalTitle").textContent = "Nový záznam";
     document.getElementById("saveAdd").textContent = "Uložit záznam";
 
@@ -1739,6 +1771,7 @@
     setStackChip(lf.stack === "full" || lf.stack === "solo" ? lf.stack : null);
     setRoundChip(null);
 
+    updateModeUI();
     updateWeaponHint();
     overlay.classList.add("show");
   }
@@ -1747,6 +1780,7 @@
     editingId = entry.id;
     currentMatchId = entry.matchId || null;
     buildSeasonField(seasonOf(entry));
+    document.getElementById("modeField").value = modeOf(entry);
     document.getElementById("modalTitle").textContent = "Upravit záznam";
     document.getElementById("saveAdd").textContent = "Uložit změny";
     document.getElementById("modalSubtitle").style.display = "none";
@@ -1765,6 +1799,7 @@
     setStackChip(entry.fullStack || null);
     setRoundChip(entry.round ? String(entry.round) : null);
 
+    updateModeUI();
     updateWeaponHint();
     overlay.classList.add("show");
   }
@@ -1774,10 +1809,21 @@
     document.getElementById("weaponSelect").value = entry.weapon;
     if (entry.map && MAPS.indexOf(entry.map) !== -1) document.getElementById("mapSelect").value = entry.map;
     buildSeasonField(seasonOf(entry));
+    document.getElementById("modeField").value = modeOf(entry);
+    updateModeUI();
     setStackChip(entry.fullStack || null);
     document.getElementById("modalTitle").textContent = "Nový záznam · stejné nastavení";
     updateWeaponHint();
   }
+
+  // modes without rounds hide the round picker
+  function updateModeUI(){
+    var m = document.getElementById("modeField").value;
+    var show = !!MODE_ROUNDS[m];
+    document.getElementById("roundField").style.display = show ? "" : "none";
+    if (!show) setRoundChip(null);
+  }
+  document.getElementById("modeField").addEventListener("change", updateModeUI);
 
   function updateWeaponHint(){
     var w = document.getElementById("weaponSelect").value;
@@ -1824,12 +1870,14 @@
   function saveCurrentRound(){
     var v = readFormValues();
     var seasonVal = parseInt(document.getElementById("seasonField").value, 10) || seasonData.current;
+    var modeVal = document.getElementById("modeField").value;
 
     if (editingId){
       var idx = entries.findIndex(function(e){ return String(e.id) === String(editingId); });
       if (idx !== -1){
         entries[idx].weapon = v.weapon;
         entries[idx].season = seasonVal;
+        entries[idx].mode = modeVal;
         entries[idx].note = v.note;
         entries[idx].class = WEAPON_CLASS[v.weapon];
         entries[idx].map = v.map || null;
@@ -1848,6 +1896,7 @@
       entries.push({
         id: genId(),
         season: seasonVal,
+        mode: modeVal,
         note: v.note,
         weapon: v.weapon,
         class: WEAPON_CLASS[v.weapon],
@@ -1862,7 +1911,7 @@
     }
 
     setLastWeapon(v.weapon);
-    setLastForm({ weapon: v.weapon, map: v.map, stack: selectedFullStack });
+    setLastForm({ weapon: v.weapon, map: v.map, stack: selectedFullStack, mode: modeVal });
     save();
   }
 
@@ -1901,6 +1950,7 @@
     { selector:"#lbSortChips", title:"Žebříček zbraní", text:"Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf." },
     { selector:"#classChips", title:"Filtr podle třídy", text:"Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi." },
     { selector:"#weaponFilter", title:"Filtr podle zbraně", text:"Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy." },
+    { selector:"#modeFilter", title:"Filtr podle módu", text:"Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“." },
     { selector:"#logHeading", title:"Historie zápasů", text:"Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších." },
     { selector:".row-actions", title:"Úprava a mazání", text:"Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť." },
     { selector:"#badgesGrid", title:"Odznaky", text:"Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh." },
@@ -2030,7 +2080,7 @@
   }
   function hasPending(){ return !!(Object.keys(pending.up).length || Object.keys(pending.del).length || pending.settings); }
   function entrySig(e){
-    return [e.weapon, e.map, e.result, e.fullStack, e.round, e.matchId, e.season, e.kills, e.deaths, e.assists, e.note, e.ts].join("\u0001");
+    return [e.weapon, e.map, e.result, e.fullStack, e.round, e.matchId, e.season, e.mode, e.kills, e.deaths, e.assists, e.note, e.ts].join("\u0001");
   }
   function snapshot(list){ var m = {}; list.forEach(function(e){ m[e.id] = entrySig(e); }); return m; }
   function settingsSig(){ return JSON.stringify([seasonData.list, seasonData.current, custom]); }
@@ -2125,7 +2175,7 @@
       id: String(e.id), user_id: session.user.id, season: seasonOf(e), weapon: e.weapon,
       "class": e["class"] || WEAPON_CLASS[e.weapon] || null,
       map: e.map || null, result: e.result || null, full_stack: e.fullStack || null,
-      round: e.round || null, match_id: e.matchId || null,
+      round: e.round || null, match_id: e.matchId || null, mode: e.mode || null,
       kills: e.kills | 0, deaths: e.deaths | 0, assists: e.assists | 0,
       note: e.note || null, ts: Math.round(Number(e.ts) || Date.now())
     };
@@ -2140,7 +2190,7 @@
     return {
       id: String(r.id), season: r.season || null, weapon: r.weapon, "class": WEAPON_CLASS[r.weapon],
       map: r.map || null, result: r.result || null, fullStack: r.full_stack || null,
-      round: r.round || null, matchId: r.match_id || null,
+      round: r.round || null, matchId: r.match_id || null, mode: r.mode || null,
       kills: r.kills || 0, deaths: r.deaths || 0, assists: r.assists || 0,
       note: r.note || "", ts: Number(r.ts) || Date.now()
     };
@@ -2155,6 +2205,26 @@
   function scheduleRetry(){
     clearTimeout(retryTimer);
     retryTimer = setTimeout(function(){ flush(); }, 20000);
+  }
+
+  // works even before the "mode" column exists in Supabase (the mode then just stays on this device)
+  var noModeColumn = false;
+  async function postEntries(rows){
+    var strip = function(rs){ return rs.map(function(r){ var x = {}; Object.keys(r).forEach(function(k){ if (k !== "mode") x[k] = r[k]; }); return x; }); };
+    var send = function(rs){
+      return api("/rest/v1/entries?on_conflict=user_id,id", {
+        method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(rs)
+      });
+    };
+    if (noModeColumn) rows = strip(rows);
+    try { await send(rows); }
+    catch (err){
+      if (!noModeColumn && err.status === 400 && /mode/i.test(err.message)){
+        noModeColumn = true;
+        showToast("V cloudu chybí sloupec „mode“ — spusť SQL z chatu, jinak se mód neuloží.");
+        await send(strip(rows));
+      } else throw err;
+    }
   }
 
   async function flush(){
@@ -2183,10 +2253,7 @@
         var ch = upIds.slice(j, j + 200);
         var sent = {};
         ch.forEach(function(id){ sent[id] = entrySig(byId[id]); });
-        await api("/rest/v1/entries?on_conflict=user_id,id", {
-          method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
-          body: JSON.stringify(ch.map(function(id){ return toRow(byId[id]); }))
-        });
+        await postEntries(ch.map(function(id){ return toRow(byId[id]); }));
         ch.forEach(function(id){ if (lastSnap[id] === sent[id]) delete pending.up[id]; });
         savePending();
       }
@@ -2236,7 +2303,10 @@
       }
     }
     rebuildCatalog();
+    var localMode = {};
+    entries.forEach(function(e){ if (e.mode) localMode[e.id] = e.mode; });
     var list = rows.map(fromRow).filter(Boolean);
+    list.forEach(function(e){ if (!e.mode && localMode[e.id]) e.mode = localMode[e.id]; });
     entries = list;
     list.forEach(function(e){
       var s = seasonOf(e);
@@ -2320,7 +2390,7 @@
       if (!(season > 0 && season < 1000)) season = null;
       if (season && seasonData.list.indexOf(season) === -1) seasonData.list.push(season);
       entries.push({
-        id: id, season: season, weapon: e.weapon, "class": WEAPON_CLASS[e.weapon],
+        id: id, season: season, mode: MODE_ROUNDS.hasOwnProperty(e.mode) ? e.mode : null, weapon: e.weapon, "class": WEAPON_CLASS[e.weapon],
         map: typeof e.map === "string" ? e.map.slice(0, 60) : null,
         result: (e.result === "win" || e.result === "loss") ? e.result : null,
         fullStack: (e.fullStack === "full" || e.fullStack === "solo") ? e.fullStack : null,
@@ -2585,6 +2655,15 @@
   }
 
   // ---------- extra filters, pagination, mobile add button ----------
+  (function(){
+    var opts = MODES.map(function(m){ return '<option value="' + esc(m.id) + '">' + esc(m.id) + '</option>'; }).join("");
+    document.getElementById("modeField").innerHTML = opts;
+    document.getElementById("modeFilter").innerHTML = '<option value="">Všechny módy</option>' + opts;
+  })();
+  document.getElementById("modeFilter").addEventListener("change", function(){
+    state.modeFilter = this.value;
+    renderAll();
+  });
   document.getElementById("resultFilterChips").addEventListener("click", function(ev){
     var btn = ev.target.closest(".chip");
     if (!btn) return;
