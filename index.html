@@ -296,7 +296,7 @@
 
   /* ---------- table ---------- */
   .table-wrap{overflow-x:auto;padding:6px 8px 16px;}
-  table{width:100%;border-collapse:collapse;min-width:1060px;}
+  table{width:100%;border-collapse:collapse;min-width:1130px;}
   thead th{
     text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-dim);font-weight:500;
@@ -493,6 +493,12 @@
   @media (max-width:1100px){ .badges-grid{--cols:4;} }
   @media (max-width:760px){ .badges-grid{--cols:3;} }
   @media (max-width:520px){ .badges-grid{--cols:2;} }
+  .side-pill{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;font-weight:600;
+    padding:2px 7px;border-radius:5px;text-transform:uppercase;white-space:nowrap;
+  }
+  .side-pill.attack{background:rgba(255,91,30,0.16);color:var(--accent-2);}
+  .side-pill.defend{background:rgba(95,208,255,0.14);color:var(--light-c);}
   .footer-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
   .footer-actions .btn{padding:9px 16px;font-size:12.5px;}
   .toast{
@@ -623,6 +629,7 @@
         <button class="chip" data-tab="maps">Podle mapy</button>
         <button class="chip" data-tab="classes">Podle třídy</button>
         <button class="chip" data-tab="modes">Podle módu</button>
+        <button class="chip" data-tab="sides">Útok / obrana</button>
       </div>
     </div>
 
@@ -639,6 +646,9 @@
     </div>
     <div class="stats-tab-content" id="tabModes" style="display:none;">
       <div class="leaderboard-list" id="modeStatsList" style="padding:14px 12px 20px;"></div>
+    </div>
+    <div class="stats-tab-content" id="tabSides" style="display:none;">
+      <div class="leaderboard-list" id="sideStatsList" style="padding:14px 12px 20px;"></div>
     </div>
   </section>
 
@@ -698,6 +708,7 @@
               <th data-key="weapon">Zbraň <span class="arrow">▾</span></th>
               <th data-key="class">Třída <span class="arrow">▾</span></th>
               <th data-key="mode">Mód <span class="arrow">▾</span></th>
+              <th data-key="side">Strana <span class="arrow">▾</span></th>
               <th data-key="map">Mapa <span class="arrow">▾</span></th>
               <th data-key="result">Výsledek <span class="arrow">▾</span></th>
               <th data-key="fullStack">Stack <span class="arrow">▾</span></th>
@@ -789,6 +800,13 @@
       <div class="chips" id="resultChips">
         <button type="button" class="chip result-chip" data-result="win">Výhra</button>
         <button type="button" class="chip result-chip" data-result="loss">Prohra</button>
+      </div>
+    </div>
+    <div class="field" id="sideField" style="display:none;">
+      <label>Strana (Point Break)</label>
+      <div class="chips" id="sideChips">
+        <button type="button" class="chip side-chip" data-side="attack">Útočníci</button>
+        <button type="button" class="chip side-chip" data-side="defend">Obránci</button>
       </div>
     </div>
     <div class="field">
@@ -981,6 +999,7 @@
   var selectedResult = null;
   var selectedFullStack = null;
   var selectedRound = null;
+  var selectedSide = null;
   var currentMatchId = null;
   var editingId = null;
   function genId(){ return Date.now()+"-"+Math.random().toString(36).slice(2,7); }
@@ -1366,10 +1385,12 @@
     document.getElementById("tabMaps").style.display = statsTab === "maps" ? "block" : "none";
     document.getElementById("tabClasses").style.display = statsTab === "classes" ? "block" : "none";
     document.getElementById("tabModes").style.display = statsTab === "modes" ? "block" : "none";
+    document.getElementById("tabSides").style.display = statsTab === "sides" ? "block" : "none";
     if (statsTab === "trend") renderTrendChart();
     else if (statsTab === "maps") renderGroupStats("mapStatsList", aggregateBy(function(e){ return e.map; }));
     else if (statsTab === "classes") renderGroupStats("classStatsList", aggregateBy(function(e){ return e.class; }), ["Light","Medium","Heavy"]);
-    else renderGroupStats("modeStatsList", aggregateBy(function(e){ return modeOf(e); }), MODE_IDS);
+    else if (statsTab === "modes") renderGroupStats("modeStatsList", aggregateBy(function(e){ return modeOf(e); }), MODE_IDS);
+    else renderGroupStats("sideStatsList", aggregateBy(function(e){ return e.side === "attack" ? "Útočníci" : (e.side === "defend" ? "Obránci" : null); }), ["Útočníci", "Obránci"]);
   }
 
   document.getElementById("statsTabChips").addEventListener("click", function(ev){
@@ -1466,7 +1487,7 @@
   function renderTable(){
     var rows = filteredEntries().map(function(e){
       return {
-        id:e.id, weapon:e.weapon, class:e.class, mode: modeOf(e),
+        id:e.id, weapon:e.weapon, class:e.class, mode: modeOf(e), side: e.side || "",
         map: e.map || "", result: e.result || "", fullStack: e.fullStack || "",
         round: e.round || "", matchId: e.matchId || "",
         kills:e.kills, deaths:e.deaths, assists:e.assists,
@@ -1510,6 +1531,8 @@
       var stackHtml = r.fullStack === "full"
         ? '<span class="stack-pill full">Full stack</span>'
         : (r.fullStack === "solo" ? '<span class="stack-pill solo">Solo/Duo</span>' : '<span style="color:var(--text-dimmer)">—</span>');
+      var sideHtml = r.side === "attack" ? '<span class="side-pill attack">Útok</span>'
+        : (r.side === "defend" ? '<span class="side-pill defend">Obrana</span>' : '<span style="color:var(--text-dimmer)">—</span>');
       var roundHtml = r.round
         ? '<span class="round-pill">Kolo '+r.round+'</span>'
         : '<span style="color:var(--text-dimmer)">—</span>';
@@ -1517,6 +1540,7 @@
         '<td data-label="Zbraň">'+esc(r.weapon)+'</td>'+
         '<td data-label="Třída"><span class="class-pill '+r.class+'">'+r.class+'</span></td>'+
         '<td class="map-cell" data-label="Mód">'+esc(r.mode)+'</td>'+
+        '<td data-label="Strana">'+sideHtml+'</td>'+
         '<td class="map-cell" data-label="Mapa">'+esc(r.map || "—")+'</td>'+
         '<td data-label="Výsledek">'+resultHtml+'</td>'+
         '<td data-label="Stack">'+stackHtml+'</td>'+
@@ -1710,6 +1734,13 @@
     selectedFullStack = val;
   });
 
+  // ---------- side chips (modal) ----------
+  document.getElementById("sideChips").addEventListener("click", function(ev){
+    var btn = ev.target.closest(".chip");
+    if (!btn) return;
+    setSideChip(selectedSide === btn.dataset.side ? null : btn.dataset.side);
+  });
+
   // ---------- round chips (modal) ----------
   document.getElementById("roundChips").addEventListener("click", function(ev){
     var btn = ev.target.closest(".chip");
@@ -1740,6 +1771,12 @@
       c.classList.toggle("active", c.dataset.stack === val);
     });
   }
+  function setSideChip(val){
+    selectedSide = val;
+    document.querySelectorAll("#sideChips .chip").forEach(function(c){
+      c.classList.toggle("active", c.dataset.side === val);
+    });
+  }
   function setRoundChip(val){
     selectedRound = val;
     document.querySelectorAll("#roundChips .chip").forEach(function(c){
@@ -1759,6 +1796,7 @@
     currentMatchId = null;
     document.getElementById("inNote").value = "";
     buildSeasonField(typeof seasonData.view === "number" ? seasonData.view : seasonData.current);
+    setSideChip(null);
     var lastMode = getLastForm().mode;
     document.getElementById("modeField").value = MODE_ROUNDS.hasOwnProperty(lastMode) ? lastMode : "Cashout";
     document.getElementById("modalTitle").textContent = "Nový záznam";
@@ -1794,6 +1832,7 @@
     buildSeasonField(seasonOf(entry));
     document.getElementById("modeField").value = modeOf(entry);
     document.getElementById("modalTitle").textContent = "Upravit záznam";
+    setSideChip(entry.side || null);
     document.getElementById("saveAdd").textContent = "Uložit změny";
     document.getElementById("modalSubtitle").style.display = "none";
 
@@ -1834,6 +1873,9 @@
     var show = !!MODE_ROUNDS[m];
     document.getElementById("roundField").style.display = show ? "" : "none";
     if (!show) setRoundChip(null);
+    var pb = (m === "Point Break");
+    document.getElementById("sideField").style.display = pb ? "" : "none";
+    if (!pb) setSideChip(null);
   }
   document.getElementById("modeField").addEventListener("change", updateModeUI);
 
@@ -1883,6 +1925,7 @@
     var v = readFormValues();
     var seasonVal = parseInt(document.getElementById("seasonField").value, 10) || seasonData.current;
     var modeVal = document.getElementById("modeField").value;
+    var sideVal = (modeVal === "Point Break") ? selectedSide : null;
 
     if (editingId){
       var idx = entries.findIndex(function(e){ return String(e.id) === String(editingId); });
@@ -1890,6 +1933,7 @@
         entries[idx].weapon = v.weapon;
         entries[idx].season = seasonVal;
         entries[idx].mode = modeVal;
+        entries[idx].side = sideVal;
         entries[idx].note = v.note;
         entries[idx].class = WEAPON_CLASS[v.weapon];
         entries[idx].map = v.map || null;
@@ -1909,6 +1953,7 @@
         id: genId(),
         season: seasonVal,
         mode: modeVal,
+        side: sideVal,
         note: v.note,
         weapon: v.weapon,
         class: WEAPON_CLASS[v.weapon],
@@ -2092,7 +2137,7 @@
   }
   function hasPending(){ return !!(Object.keys(pending.up).length || Object.keys(pending.del).length || pending.settings); }
   function entrySig(e){
-    return [e.weapon, e.map, e.result, e.fullStack, e.round, e.matchId, e.season, e.mode, e.kills, e.deaths, e.assists, e.note, e.ts].join("\u0001");
+    return [e.weapon, e.map, e.result, e.fullStack, e.round, e.matchId, e.season, e.mode, e.side, e.kills, e.deaths, e.assists, e.note, e.ts].join("\u0001");
   }
   function snapshot(list){ var m = {}; list.forEach(function(e){ m[e.id] = entrySig(e); }); return m; }
   function settingsSig(){ return JSON.stringify([seasonData.list, seasonData.current, custom]); }
@@ -2187,7 +2232,7 @@
       id: String(e.id), user_id: session.user.id, season: seasonOf(e), weapon: e.weapon,
       "class": e["class"] || WEAPON_CLASS[e.weapon] || null,
       map: e.map || null, result: e.result || null, full_stack: e.fullStack || null,
-      round: e.round || null, match_id: e.matchId || null, mode: e.mode || null,
+      round: e.round || null, match_id: e.matchId || null, mode: e.mode || null, side: e.side || null,
       kills: e.kills | 0, deaths: e.deaths | 0, assists: e.assists | 0,
       note: e.note || null, ts: Math.round(Number(e.ts) || Date.now())
     };
@@ -2202,7 +2247,7 @@
     return {
       id: String(r.id), season: r.season || null, weapon: r.weapon, "class": WEAPON_CLASS[r.weapon],
       map: r.map || null, result: r.result || null, fullStack: r.full_stack || null,
-      round: r.round || null, matchId: r.match_id || null, mode: r.mode || null,
+      round: r.round || null, matchId: r.match_id || null, mode: r.mode || null, side: r.side || null,
       kills: r.kills || 0, deaths: r.deaths || 0, assists: r.assists || 0,
       note: r.note || "", ts: Number(r.ts) || Date.now()
     };
@@ -2219,23 +2264,29 @@
     retryTimer = setTimeout(function(){ flush(); }, 20000);
   }
 
-  // works even before the "mode" column exists in Supabase (the mode then just stays on this device)
-  var noModeColumn = false;
+  // works even before the optional "mode" / "side" columns exist in Supabase (those values then stay on this device)
+  var missingCols = {};
   async function postEntries(rows){
-    var strip = function(rs){ return rs.map(function(r){ var x = {}; Object.keys(r).forEach(function(k){ if (k !== "mode") x[k] = r[k]; }); return x; }); };
-    var send = function(rs){
-      return api("/rest/v1/entries?on_conflict=user_id,id", {
-        method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(rs)
+    var strip = function(rs){
+      return rs.map(function(r){
+        var x = {};
+        Object.keys(r).forEach(function(k){ if (!missingCols[k]) x[k] = r[k]; });
+        return x;
       });
     };
-    if (noModeColumn) rows = strip(rows);
-    try { await send(rows); }
-    catch (err){
-      if (!noModeColumn && err.status === 400 && /mode/i.test(err.message)){
-        noModeColumn = true;
-        showToast("V cloudu chybí sloupec „mode“ — spusť SQL z chatu, jinak se mód neuloží.");
-        await send(strip(rows));
-      } else throw err;
+    for (var attempt = 0; attempt < 3; attempt++){
+      try {
+        await api("/rest/v1/entries?on_conflict=user_id,id", {
+          method: "POST", headers: { Prefer: "resolution=merge-duplicates,return=minimal" }, body: JSON.stringify(strip(rows))
+        });
+        return;
+      } catch (err){
+        var m = /'(mode|side)' column/.exec(err.message || "");
+        if (err.status === 400 && m && !missingCols[m[1]]){
+          missingCols[m[1]] = true;
+          showToast("V cloudu chybí sloupec „" + m[1] + "“ — spusť SQL z chatu, jinak se tahle hodnota neuloží.");
+        } else throw err;
+      }
     }
   }
 
@@ -2315,10 +2366,15 @@
       }
     }
     rebuildCatalog();
-    var localMode = {};
-    entries.forEach(function(e){ if (e.mode) localMode[e.id] = e.mode; });
+    var localExtra = {};
+    entries.forEach(function(e){ localExtra[e.id] = { mode: e.mode, side: e.side }; });
     var list = rows.map(fromRow).filter(Boolean);
-    list.forEach(function(e){ if (!e.mode && localMode[e.id]) e.mode = localMode[e.id]; });
+    list.forEach(function(e){
+      var l = localExtra[e.id];
+      if (!l) return;
+      if (!e.mode && l.mode) e.mode = l.mode;
+      if (!e.side && l.side) e.side = l.side;
+    });
     entries = list;
     list.forEach(function(e){
       var s = seasonOf(e);
@@ -2402,7 +2458,7 @@
       if (!(season > 0 && season < 1000)) season = null;
       if (season && seasonData.list.indexOf(season) === -1) seasonData.list.push(season);
       entries.push({
-        id: id, season: season, mode: MODE_ROUNDS.hasOwnProperty(e.mode) ? e.mode : null, weapon: e.weapon, "class": WEAPON_CLASS[e.weapon],
+        id: id, season: season, mode: MODE_ROUNDS.hasOwnProperty(e.mode) ? e.mode : null, side: (e.side === "attack" || e.side === "defend") ? e.side : null, weapon: e.weapon, "class": WEAPON_CLASS[e.weapon],
         map: typeof e.map === "string" ? e.map.slice(0, 60) : null,
         result: (e.result === "win" || e.result === "loss") ? e.result : null,
         fullStack: (e.fullStack === "full" || e.fullStack === "solo") ? e.fullStack : null,
