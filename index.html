@@ -161,8 +161,9 @@
   }
   .hero-stat .value{
     font-family:var(--mono);font-weight:700;font-size:clamp(18px,2.6vw,30px);
-    letter-spacing:-0.01em;
+    letter-spacing:-0.01em;white-space:nowrap;
   }
+  .hero-stat .value small{font-size:.5em;font-weight:600;color:var(--text-dim);margin-left:5px;letter-spacing:0;}
   .hero-stat.kd .value{
     color:var(--accent-2);
     text-shadow:0 0 22px rgba(255,176,32,0.45);
@@ -181,7 +182,8 @@
   }
 
   /* ---------- layout ---------- */
-  .grid{display:grid;grid-template-columns:1fr;gap:18px;}
+  .grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;}
+  .grid > .panel{min-width:0;}
 
   .panel-head{
     display:flex;align-items:center;justify-content:space-between;
@@ -397,7 +399,7 @@
   .btn-cancel:hover{color:var(--text);border-color:var(--panel-border-hover);}
 
   .highlight-row{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
     padding:16px 20px 4px;
   }
   .highlight-card{
@@ -443,7 +445,10 @@
   .group-stat-name{font-family:var(--disp);font-weight:600;font-size:13.5px;margin-bottom:6px;}
   .group-stat-bar-track{height:5px;border-radius:3px;background:rgba(255,255,255,0.06);overflow:hidden;}
   .group-stat-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2));}
-  @media (max-width:700px){
+  @media (max-width:900px){
+    .highlight-row{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:520px){
     .highlight-row{grid-template-columns:1fr;}
   }
 
@@ -481,6 +486,13 @@
     border:1px solid var(--panel-border);color:var(--text);font-size:14px;
   }
   .field input[type=email]:focus, .field input[type=password]:focus{outline:2px solid var(--accent-border);outline-offset:1px;}
+  .head-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;}
+  @media (max-width:700px){ .head-filters{justify-content:flex-start;} }
+  .badges-grid{--cols:6;display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+  .badges-grid .badge-card{flex:0 0 calc((100% - (var(--cols) - 1) * 12px) / var(--cols));min-width:0;}
+  @media (max-width:1100px){ .badges-grid{--cols:4;} }
+  @media (max-width:760px){ .badges-grid{--cols:3;} }
+  @media (max-width:520px){ .badges-grid{--cols:2;} }
   .footer-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
   .footer-actions .btn{padding:9px 16px;font-size:12.5px;}
   .toast{
@@ -647,7 +659,7 @@
     <section class="panel">
       <div class="panel-head">
         <h2 id="logHeading">Historie zápasů <span class="count" id="logCount">0</span></h2>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <div class="head-filters">
           <div class="chips" id="classChips">
             <button class="chip active" data-class="All">Vše</button>
             <button class="chip" data-class="Light">Light</button>
@@ -1384,7 +1396,7 @@
     document.getElementById("statKD").textContent = fmtKD(kd(totK,totD));
     var decided = wins+losses;
     var wr = decided ? Math.round((wins/decided)*100)+"%" : "—";
-    document.getElementById("statWins").textContent = decided ? (wins+"/"+decided+" ("+wr+")") : "0/0";
+    document.getElementById("statWins").innerHTML = decided ? (wins + "/" + decided + "<small>" + wr + "</small>") : "0/0";
   }
 
   // ---------- render leaderboard ----------
