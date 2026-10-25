@@ -465,6 +465,7 @@
     tbody td.note-cell{max-width:none;}
   }
   .icon-btn{position:relative;}
+  .lang-btn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.03em;}
   .sync-dot{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);background:transparent;}
   .login-bar{
     display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
@@ -488,6 +489,118 @@
   .field input[type=email]:focus, .field input[type=password]:focus{outline:2px solid var(--accent-border);outline-offset:1px;}
   .head-filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;}
   @media (max-width:700px){ .head-filters{justify-content:flex-start;} }
+  /* ---------- motion & polish ---------- */
+  @keyframes riseIn{from{opacity:0;transform:translateY(16px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes drift{0%{transform:translate3d(0,0,0) scale(1);}50%{transform:translate3d(4%,3%,0) scale(1.08);}100%{transform:translate3d(-3%,5%,0) scale(1);}}
+  @keyframes drawLine{to{stroke-dashoffset:0;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes rowFlash{0%{background:rgba(255,91,30,.38);box-shadow:inset 3px 0 0 var(--accent);}100%{background:transparent;box-shadow:inset 3px 0 0 transparent;}}
+  @keyframes dotPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.6);opacity:.55;}}
+  @keyframes shine{from{transform:translateX(-120%) skewX(-18deg);}to{transform:translateX(320%) skewX(-18deg);}}
+  body{font-feature-settings:"tnum" 1;}
+  body::before{
+    content:"";position:fixed;inset:-12%;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(38% 34% at 18% 14%, rgba(255,91,30,.17), transparent 70%),
+      radial-gradient(34% 30% at 86% 24%, rgba(95,208,255,.10), transparent 70%),
+      radial-gradient(40% 34% at 62% 92%, rgba(255,176,32,.09), transparent 70%);
+    animation:drift 28s ease-in-out infinite alternate;
+  }
+  html.light body::before{opacity:.55;}
+  .reveal{animation:riseIn .8s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i, 0) * 75ms);}
+  .panel{transition:border-color .3s ease, box-shadow .3s ease;}
+  .panel:hover{border-color:var(--panel-border-hover);box-shadow:0 22px 50px -30px rgba(0,0,0,.65);}
+  .highlight-card,.badge-card{transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .3s ease, opacity .25s ease;}
+  .highlight-card:hover{transform:translateY(-3px);border-color:var(--panel-border-hover);box-shadow:0 16px 32px -18px rgba(0,0,0,.7);}
+  .badge-card.unlocked:hover{transform:translateY(-4px) rotate(-.5deg);box-shadow:0 18px 34px -16px rgba(255,91,30,.5);}
+  .badge-card.locked:hover{opacity:.75;}
+  .lb-row{transition:background .2s ease, border-color .2s ease, transform .25s cubic-bezier(.2,.7,.2,1);}
+  .lb-row:hover{transform:translateX(4px);}
+  .btn{position:relative;overflow:hidden;}
+  .btn-primary::after{
+    content:"";position:absolute;top:0;bottom:0;left:0;width:40%;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:translateX(-120%) skewX(-18deg);
+  }
+  .btn-primary:hover::after{animation:shine .8s ease;}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 12px 24px -8px rgba(255,91,30,.7);}
+  .btn-primary:active{transform:translateY(0) scale(.97);}
+  .icon-btn{transition:transform .2s ease, border-color .2s ease, background .2s ease;}
+  .icon-btn:hover{transform:translateY(-2px) rotate(-6deg);}
+  .chip{transition:all .2s ease;}
+  .chip:active{transform:scale(.94);}
+  .lb-bar-fill,.group-stat-bar-fill,.badge-progress-fill{transition:width 1s cubic-bezier(.2,.7,.2,1);}
+  .sync-dot{transition:background .3s ease;}
+  .sync-dot.busy{animation:dotPulse 1s ease-in-out infinite;}
+  tbody tr.flash{animation:rowFlash 2s ease-out;}
+  .overlay{animation:fadeIn .2s ease;}
+  .toast{animation:riseIn .35s cubic-bezier(.2,.7,.2,1);}
+  #trendChartWrap{position:relative;}
+  .trend-line{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.4s .1s cubic-bezier(.3,.6,.2,1) forwards;}
+  .trend-ma{stroke-dasharray:1;stroke-dashoffset:1;animation:drawLine 1.6s .3s ease-out forwards;}
+  .trend-area,.trend-dot{opacity:0;animation:fadeIn .6s 1.1s ease forwards;}
+  .trend-hl,.trend-guide{transition:opacity .15s ease;pointer-events:none;}
+  .chart-tip{
+    position:absolute;pointer-events:none;z-index:6;white-space:nowrap;opacity:0;
+    background:var(--bg-2);border:1px solid var(--panel-border-hover);border-radius:12px;padding:9px 12px;
+    font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--text);
+    transform:translate(-50%,calc(-100% - 14px));transition:opacity .15s ease;
+    box-shadow:0 16px 36px -14px rgba(0,0,0,.7);
+  }
+  .chart-tip b{font-family:var(--disp);font-size:12.5px;}
+  .chart-tip .dim{color:var(--text-dim);}
+  .trend-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--text-dim);}
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-delay:0ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
+    .trend-line,.trend-ma{stroke-dashoffset:0;}
+    .trend-area,.trend-dot{opacity:1;}
+  }
+  .search-input{
+    background:rgba(255,255,255,.05);border:1px solid var(--panel-border);color:var(--text);
+    border-radius:999px;padding:7px 14px;font-family:var(--mono);font-size:12px;min-width:150px;width:170px;
+    transition:border-color .2s ease, width .25s ease, background .2s ease;
+  }
+  .search-input::placeholder{color:var(--text-dimmer);}
+  .search-input:focus{outline:none;border-color:var(--accent-border);background:var(--accent-soft);width:230px;}
+  kbd{
+    font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:7px;min-width:34px;text-align:center;
+    background:var(--panel-2);border:1px solid var(--panel-border-hover);border-bottom-width:2px;color:var(--text);
+  }
+  .kbd-list{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+  .kbd-list > div{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--text-dim);}
+  .heat-months{display:flex;gap:4px;font-family:var(--mono);font-size:9.5px;color:var(--text-dim);margin:0 0 6px 28px;height:12px;position:relative;}
+  .heat-body{display:flex;gap:8px;}
+  .heat-days{display:grid;grid-template-rows:repeat(7,15px);gap:4px;font-family:var(--mono);font-size:9.5px;color:var(--text-dimmer);align-items:center;width:20px;}
+  .heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,15px);grid-auto-columns:15px;gap:4px;}
+  .heat-cell{width:15px;height:15px;border-radius:4px;background:rgba(255,255,255,.055);transition:transform .15s ease, outline-color .15s ease;outline:1px solid transparent;}
+  html.light .heat-cell:not(.l1):not(.l2):not(.l3):not(.l4){background:rgba(10,10,12,.06);}
+  .heat-cell:hover{transform:scale(1.35);outline-color:var(--text);}
+  .heat-cell.l1{background:rgba(255,91,30,.28);} .heat-cell.l2{background:rgba(255,91,30,.5);}
+  .heat-cell.l3{background:rgba(255,120,40,.78);} .heat-cell.l4{background:var(--accent-2);}
+  .heat-cell.future{visibility:hidden;}
+  .heat-legend{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:12px;flex-wrap:wrap;}
+  .heat-legend .heat-cell{width:12px;height:12px;}
+  .heat-legend .heat-cell:hover{transform:none;}
+  .cmp-selects{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:18px;}
+  .cmp-selects .vs{font-family:var(--mono);font-size:11px;color:var(--text-dimmer);}
+  .cmp-selects select{width:100%;}
+  .cmp-row{display:grid;grid-template-columns:76px 1fr 76px;align-items:center;gap:14px;padding:9px 0;border-top:1px solid rgba(255,255,255,.05);}
+  .cmp-row:first-of-type{border-top:none;}
+  .cmp-val{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--text-dim);}
+  .cmp-val.b{text-align:right;}
+  .cmp-val.win{color:var(--text);}
+  .cmp-val.win.a{color:var(--accent-2);} .cmp-val.win.b{color:var(--light-c);}
+  .cmp-label{text-align:center;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:6px;}
+  .cmp-track{display:flex;height:6px;border-radius:3px;overflow:hidden;background:var(--light-c);}
+  .cmp-track i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:3px 0 0 3px;transition:width 1s cubic-bezier(.2,.7,.2,1);}
+  @media (max-width:520px){ .cmp-row{grid-template-columns:56px 1fr 56px;gap:10px;} .cmp-val{font-size:14px;} .search-input{width:100%;} }
+  .modal.wide{max-width:780px;}
+  .share-preview{background:#07070a;border:1px solid var(--panel-border);border-radius:14px;padding:8px;margin:10px 0 16px;}
+  .share-preview canvas{display:block;width:100%;height:auto;border-radius:8px;}
+  .share-controls{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;}
+  .share-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+  .share-actions .btn{flex:1 1 auto;justify-content:center;}
+  .share-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;}
+  @media (max-width:560px){ .share-controls{grid-template-columns:1fr;} }
   .badges-grid{--cols:6;display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
   .badges-grid .badge-card{flex:0 0 calc((100% - (var(--cols) - 1) * 12px) / var(--cols));min-width:0;}
   @media (max-width:1100px){ .badges-grid{--cols:4;} }
@@ -595,6 +708,7 @@
     </div>
     <div class="header-actions">
       <select class="filter-select" id="seasonSelect" title="Sezóna"></select>
+      <button class="icon-btn lang-btn" id="langBtn" title="Jazyk / Language">CZ</button>
       <button class="icon-btn" id="tutorialBtn" title="Spustit tutoriál" style="font-family:var(--disp);font-weight:700;font-size:16px;">?</button>
       <button class="icon-btn" id="accountBtn" title="Přihlásit se"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.2" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.4 14c.4-2.7 2.7-4.4 5.6-4.4s5.2 1.7 5.6 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="sync-dot" id="syncDot"></span></button>
       <button class="icon-btn" id="themeToggle" title="Přepnout světlý/tmavý režim"></button>
@@ -623,13 +737,15 @@
 
   <section class="panel" style="margin-bottom:18px;">
     <div class="panel-head">
-      <h2>Statistika <span class="count" id="statsFilterBadge" style="display:none;"></span></h2>
+      <h2>Statistika <span class="count" id="statsFilterBadge" style="display:none;"></span> <button type="button" class="chip share-chip" id="shareBtn2" title="Sdílet statistiky"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 10V2m0 0L5 5m3-3 3 3M3 9v4h10V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Sdílet</button></h2>
       <div class="chips" id="statsTabChips">
         <button class="chip active" data-tab="trend">Trend K/D</button>
         <button class="chip" data-tab="maps">Podle mapy</button>
         <button class="chip" data-tab="classes">Podle třídy</button>
         <button class="chip" data-tab="modes">Podle módu</button>
         <button class="chip" data-tab="sides">Útok / obrana</button>
+        <button class="chip" data-tab="activity">Aktivita</button>
+        <button class="chip" data-tab="compare">Porovnání zbraní</button>
       </div>
     </div>
 
@@ -649,6 +765,12 @@
     </div>
     <div class="stats-tab-content" id="tabSides" style="display:none;">
       <div class="leaderboard-list" id="sideStatsList" style="padding:14px 12px 20px;"></div>
+    </div>
+    <div class="stats-tab-content" id="tabActivity" style="display:none;">
+      <div id="heatmapWrap" style="padding:14px 20px 20px;"></div>
+    </div>
+    <div class="stats-tab-content" id="tabCompare" style="display:none;">
+      <div id="compareBox" style="padding:14px 20px 20px;"></div>
     </div>
   </section>
 
@@ -670,6 +792,7 @@
       <div class="panel-head">
         <h2 id="logHeading">Historie zápasů <span class="count" id="logCount">0</span></h2>
         <div class="head-filters">
+          <input type="text" class="search-input" id="searchInput" placeholder="Hledat…  ( / )" autocomplete="off" aria-label="Hledat v historii">
           <div class="chips" id="classChips">
             <button class="chip active" data-class="All">Vše</button>
             <button class="chip" data-class="Light">Light</button>
@@ -683,6 +806,9 @@
           </div>
           <select class="filter-select" id="mapFilter"></select>
           <select class="filter-select" id="modeFilter"></select>
+          <select class="filter-select" id="rangeFilter">
+            <option value="">Celé období</option><option value="today">Dnes</option><option value="7">Posledních 7 dní</option><option value="30">Posledních 30 dní</option>
+          </select>
           <select class="filter-select" id="weaponFilter"><option value="">Všechny zbraně</option></select>
         </div>
       </div>
@@ -745,13 +871,46 @@
   </section>
 
   <div class="footer-actions">
+    <button type="button" class="btn btn-ghost" id="shareBtn">Sdílet statistiky</button>
     <button type="button" class="btn btn-ghost" id="exportBtn">Export zálohy</button>
     <button type="button" class="btn btn-ghost" id="importBtn">Import zálohy</button>
+    <button type="button" class="btn btn-ghost" id="csvBtn">Export CSV</button>
+    <button type="button" class="btn btn-ghost" id="helpBtn">Zkratky ( ? )</button>
     <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
   </div>
   <footer id="footerText">FINALS LOG · data se ukládají jen v tomto prohlížeči</footer>
 </div>
 
+<div class="overlay" id="shareOverlay"><div class="modal wide" id="shareModal">
+  <h3>Sdílet statistiky</h3>
+  <div class="share-preview"><canvas id="shareCanvas"></canvas></div>
+  <div class="share-controls">
+    <div class="field"><label for="shTemplate">Šablona</label><select id="shTemplate"><option value="overview">Přehled</option><option value="weapon">Zbraň</option></select></div>
+    <div class="field" id="shWeaponField" style="display:none;"><label for="shWeapon">Zbraň</label><select id="shWeapon"></select></div>
+    <div class="field"><label for="shFormat">Formát</label><select id="shFormat"><option value="wide">Široký (1200×630)</option><option value="square">Čtverec (1080×1080)</option></select></div>
+    <div class="field"><label for="shScope">Období</label><select id="shScope"><option value="view">Aktuální pohled</option><option value="all">Všechny sezóny</option></select></div>
+    <div class="field"><label for="shName">Jméno na kartě</label><input type="text" id="shName" maxlength="24" placeholder="např. tvoje přezdívka" autocomplete="off"></div>
+  </div>
+  <div class="share-actions">
+    <button type="button" class="btn btn-primary" id="shDownload">Stáhnout PNG</button>
+    <button type="button" class="btn btn-ghost" id="shCopy">Kopírovat obrázek</button>
+    <button type="button" class="btn btn-ghost" id="shShare">Sdílet…</button>
+    <button type="button" class="btn btn-ghost" id="shClose">Zavřít</button>
+  </div>
+  <div class="auth-msg" id="shMsg"></div>
+</div></div>
+<div class="overlay" id="helpOverlay"><div class="modal" id="helpModal">
+  <h3>Klávesové zkratky</h3>
+  <div class="kbd-list">
+    <div><kbd>N</kbd><span>Nový záznam</span></div>
+    <div><kbd>Enter</kbd><span>Uložit záznam (ve formuláři)</span></div>
+    <div><kbd>/</kbd><span>Hledat v historii</span></div>
+    <div><kbd>T</kbd><span>Přepnout světlý / tmavý režim</span></div>
+    <div><kbd>?</kbd><span>Tahle nápověda</span></div>
+    <div><kbd>Esc</kbd><span>Zavřít okno</span></div>
+  </div>
+  <div class="modal-actions"><button class="btn btn-primary" id="helpClose">Rozumím</button></div>
+</div></div>
 <div class="overlay" id="authOverlay"><div class="modal" id="authModal"></div></div>
 <button type="button" class="fab" id="fabAdd" title="Nový záznam" aria-label="Nový záznam">+</button>
 <div class="toast" id="toast" style="display:none;"></div>
@@ -888,6 +1047,127 @@
   // every stored key gets the user id appended while logged in, so accounts never mix with guest data
   function sk(base){ return session ? base + ":" + session.user.id : base; }
 
+  // ---------- language (Czech / English) ----------
+  var LANG_KEY = "finals-log-lang-v1";
+  var LANG = "cs";
+  try {
+    var savedLang = localStorage.getItem(LANG_KEY);
+    if (savedLang === "cs" || savedLang === "en") LANG = savedLang;
+    else {
+      var navLang = String(navigator.language || "cs").toLowerCase();
+      LANG = (navLang.indexOf("cs") === 0 || navLang.indexOf("sk") === 0) ? "cs" : "en";
+    }
+  } catch(e){}
+  // The interface text is written in Czech; this glossary turns it into English at display time.
+  var GLOSS = {"Aktivita": "Activity", "Asisty": "Assists", "Celé období": "All time", "Další": "Next", "Datum": "Date", "Dnes": "Today", "Export zálohy": "Export backup", "Herní mód": "Game mode", "Historie zápasů": "Match history", "Hledat v historii": "Search history", "Hledat…  ( / )": "Search…  ( / )", "Hráno ve full stacku?": "Played as a full stack?", "Import zálohy": "Import backup", "K/D poměr": "K/D ratio", "Killy": "Kills", "Klávesové zkratky": "Keyboard shortcuts", "Kolo (volitelné)": "Round (optional)", "Kolo": "Round", "Mapa": "Map", "Mód": "Mode", "Nejsi přihlášený — data jsou jen v tomhle prohlížeči.": "You're not signed in — your data is only in this browser.", "Nový záznam · stejné nastavení": "New entry · same settings", "Nový záznam": "New entry", "Obránci": "Defenders", "Odznaky": "Badges", "Podle mapy": "By map", "Podle módu": "By mode", "Podle třídy": "By class", "Porovnání zbraní": "Weapon comparison", "Posledních 30 dní": "Last 30 days", "Posledních 7 dní": "Last 7 days", "Poznámka (volitelné)": "Note (optional)", "Poznámka": "Note", "Prohra": "Loss", "Prohry": "Losses", "Přepnout světlý / tmavý režim": "Toggle light / dark mode", "Přepnout světlý/tmavý režim": "Toggle light / dark mode", "Přeskočit tutoriál": "Skip tutorial", "Přihlásit se znovu": "Sign in again", "Přihlásit se": "Sign in", "Rozumím": "Got it", "Sezóna": "Season", "Skrýt": "Hide", "Smrti": "Deaths", "Spustit tutoriál": "Start tutorial", "Statistika": "Statistics", "Strana (Point Break)": "Side (Point Break)", "Strana": "Side", "Tahle nápověda": "This help", "Třída": "Class", "Uložit záznam (ve formuláři)": "Save entry (in the form)", "Uložit záznam": "Save entry", "Uložit změny": "Save changes", "Upravit záznam": "Edit entry", "Výhra": "Win", "Výhry": "Wins", "Výsledek zápasu": "Match result", "Výsledek": "Result", "Vše": "All", "Všechny zbraně": "All weapons", "Zatím žádné zápasy. Přidej první záznam tlačítkem výše.": "No matches yet. Add your first entry with the button above.", "Zavřít okno": "Close window", "Zavřít": "Close", "Zbraň": "Weapon", "Zkratky ( ? )": "Shortcuts ( ? )", "Zpět na přihlášení": "Back to sign in", "Zpět": "Back", "Zrušit filtr": "Clear filter", "Zrušit": "Cancel", "Zápasy": "Matches", "např. ranked push, hraju s kámošema…": "e.g. ranked push, playing with friends…", "Útok / obrana": "Attack / defense", "Útočníci": "Attackers", "Žebříček zbraní": "Weapon ranking", "Útok": "Attack", "Obrana": "Defense", "Dokončit": "Finish", "splněno": "unlocked", "Jiný mód": "Other mode", "Jiná / neznámá": "Other / unknown", "(aktuální)": "(current)", "+ Nová sezóna…": "+ New season…", "Všechny sezóny": "All seasons", "Všechny mapy": "All maps", "Všechny módy": "All modes", "+ Přidat vlastní zbraň…": "+ Add custom weapon…", "+ Přidat vlastní mapu…": "+ Add custom map…", "Nejlepší zápas": "Best match", "Aktuální série": "Current streak", "Nejhranější mapa": "Most played map", "neznámá mapa": "unknown map", "od posledního zápasu": "since the last match", "zatím bez výsledků": "no results yet", "zatím nic": "nothing yet", "zahraj první kolo": "play your first round", "žádná data o mapách": "no map data", "bez výsledků": "no results", "Zatím žádná data pro statistiku.": "No data for statistics yet.", "Zatím žádná data pro graf.": "No data for the chart yet.", "Zatím žádná data o zbraních.": "No weapon data yet.", "Zatím žádná data pro": "No data yet for", "Zatím žádná data.": "No data yet.", "Zatím žádná aktivita.": "No activity yet.", "· barva bodu = výhra / prohra / nerozhodnuto": "· dot color = win / loss / undecided", "Klouzavý průměr (10)": "Moving average (10)", "průměr": "avg", "zápasů s": "matches with", "odehraných zápasů": "matches played", "všech": "all", "výhra": "win", "prohra": "loss", "výher": "wins", "killy": "kills", "zápasy": "matches", "zápasů": "matches", "záznamů": "entries", "záznamy": "entries", "záznam": "entry", "dní": "days", "dny": "days", "killů": "kills", "asistů": "assists", "aktivních dní": "active days", "nejdelší série": "longest streak", "Méně": "Less", "Více": "More", "bez aktivity": "no activity", "Na porovnání potřebuješ záznamy aspoň se dvěma zbraněmi.": "You need entries with at least two weapons to compare.", "Ø killů / zápas": "Ø kills / match", "Winrate": "Win rate", "Nový záznam se stejným nastavením": "New entry with the same settings", "Smazat záznam": "Delete entry", "Vrátit zpět": "Undo", "Záznam smazán": "Entry deleted", "z 3 · zápas pokračuje": "of 3 · match continues", "Tvoje K/D s touhle zbraní:": "Your K/D with this weapon:", "S touhle zbraní zatím nemáš žádný záznam.": "You have no entries with this weapon yet.", "Název zbraně:": "Weapon name:", "Třída? Napiš Light, Medium nebo Heavy:": "Class? Type Light, Medium or Heavy:", "Třída musí být Light, Medium nebo Heavy.": "Class must be Light, Medium or Heavy.", "Název mapy:": "Map name:", "Začít Sezónu": "Start Season", "Nové záznamy se budou ukládat do ní a statistiky začnou od nuly (starší sezóny zůstanou).": "New entries will be saved to it and the stats will start from zero (older seasons stay).", "Záloha stažena": "Backup downloaded", "Import hotov:": "Import done:", "nových záznamů": "new entries", "přeskočeno": "skipped", "Tenhle soubor se nepodařilo načíst. Vyber zálohu vyexportovanou z Finals Log.": "This file couldn't be read. Choose a backup exported from Finals Log.", "CSV stažené": "CSV downloaded", "Přihlášení proběhlo — jsi přihlášený.": "Signed in — you're logged in.", "Přihlášení": "Sign in", "Data se uloží do cloudu a uvidíš je na všech zařízeních": "Your data is saved to the cloud and visible on all your devices", "Heslo": "Password", "Vytvořit účet": "Create account", "Zapomenuté heslo": "Forgot password", "Nový účet": "New account", "Heslo aspoň 6 znaků": "Password of at least 6 characters", "Už mám účet": "I already have an account", "Pošleme ti odkaz na nastavení nového hesla": "We'll send you a link to set a new password", "Poslat odkaz": "Send link", "Nové heslo": "New password", "Zvol si nové heslo k účtu": "Choose a new password for your account", "Uložit heslo": "Save password", "Účet": "Account", "Synchronizovat teď": "Sync now", "Nahrát data z tohoto prohlížeče": "Upload data from this browser", "Odhlásit se": "Sign out", "Synchronizuju…": "Syncing…", "Hotovo.": "Done.", "Špatný e-mail nebo heslo.": "Wrong email or password.", "E-mail ještě není potvrzený — klikni na odkaz v e-mailu, který jsme ti poslali.": "Email not confirmed yet — click the link in the email we sent you.", "Tenhle e-mail je už zaregistrovaný. Zkus se přihlásit.": "This email is already registered. Try signing in.", "Heslo musí mít aspoň 6 znaků.": "Password must be at least 6 characters.", "Moc pokusů za krátkou dobu. Zkus to za chvíli.": "Too many attempts in a short time. Try again in a moment.", "Zadej platný e-mail.": "Enter a valid email.", "Něco se pokazilo (chyba": "Something went wrong (error", "Nejde se připojit k serveru. Zkontroluj internet.": "Can't reach the server. Check your internet connection.", "Vyplň e-mail a heslo.": "Enter your email and password.", "Vyplň e-mail.": "Enter your email.", "Chvilku strpení…": "Just a moment…", "Přihlášeno, načítám data…": "Signed in, loading your data…", "Účet vytvořen, načítám…": "Account created, loading…", "Poslali jsme ti potvrzovací e-mail. Klikni na odkaz v něm a pak se přihlas.": "We sent you a confirmation email. Click the link in it and then sign in.", "Pokud účet existuje, poslali jsme na e-mail odkaz na obnovení hesla.": "If the account exists, we've emailed you a password reset link.", "Heslo změněno": "Password changed", "Nahrání se nepodařilo.": "Upload failed.", "Nahráno do účtu:": "Uploaded to your account:", "už existovalo": "already existed", "V tomhle prohlížeči je": "This browser has", "uloženo bez účtu. Nahrát je do tvého účtu?": "saved without an account. Upload them to your account?", "Některé změny se ještě neuložily do cloudu a při odhlášení se ztratí. Odhlásit i tak?": "Some changes haven't been saved to the cloud yet and will be lost when you sign out. Sign out anyway?", "Vše uloženo v cloudu": "All saved to the cloud", "Ukládám…": "Saving…", "Offline — změny se uloží, až budeš online": "Offline — changes will be saved when you're back online", "Uložení se nepovedlo, zkusím to znovu": "Saving failed, I'll try again", "Přihlášení vypršelo — přihlas se znovu": "Session expired — sign in again", "přihlášen jako": "signed in as", "data v cloudu": "data in the cloud", "data se ukládají jen v tomto prohlížeči": "data is stored only in this browser", "V cloudu chybí sloupec": "The cloud is missing the column", "— spusť SQL z chatu, jinak se tahle hodnota neuloží.": "— run the SQL from the chat, otherwise this value won't be saved.", "Nový odznak:": "New badge:", "První krev": "First blood", "Setník": "Centurion", "Veterán": "Veteran", "Týmový hráč": "Team player", "Bez ztráty kytičky": "Flawless", "Horká série": "Hot streak", "Nezastavitelný": "Unstoppable", "Věrnost jedné zbrani": "One-weapon loyalty", "Cestovatel": "Explorer", "Plný stack": "Full stack", "Všestranný": "All-rounder", "Ostrostřelec": "Sharpshooter", "Maratonec": "Marathoner", "Ulož svůj první záznam do trackeru.": "Save your first entry to the tracker.", "Nasbírej 100 killů celkem.": "Collect 100 kills in total.", "Zaznamenej 100 zápasů nebo kol.": "Record 100 matches or rounds.", "Nasbírej 50 asistů celkem.": "Collect 50 assists in total.", "Zápas s aspoň 1 killem a 0 smrtí.": "A match with at least 1 kill and 0 deaths.", "Vyhraj 5 zápasů v řadě.": "Win 5 matches in a row.", "Vyhraj 10 zápasů v řadě.": "Win 10 matches in a row.", "20 zápasů se stejnou zbraní.": "20 matches with the same weapon.", "Zahraj si na všech": "Play on all", "mapách.": "maps.", "10 zápasů ve full stacku.": "10 matches as a full stack.", "Zahraj 5 různých herních módů.": "Play 5 different game modes.", "K/D 3.0+ v jednom zápase (min. 5 killů).": "K/D 3.0+ in a single match (min. 5 kills).", "Zaznamenej všechna 3 kola jednoho Cashout zápasu.": "Record all 3 rounds of one Cashout match.", "Přidat zápas": "Add a match", "Sezóny": "Seasons", "Účet a cloud": "Account & cloud", "Světlý / tmavý režim": "Light / dark mode", "Celkový přehled": "Overview", "Rychlé přehledy": "Quick overview", "Filtr podle třídy": "Filter by class", "Filtr podle zbraně": "Filter by weapon", "Filtr podle módu": "Filter by mode", "Hledání a období": "Search & period", "Úprava a mazání": "Editing & deleting", "Záloha dat": "Data backup", "Jazyk": "Language", "Tady zadáš nový zápas nebo jedno kolo Cashoutu — zbraň, killy, asisty, smrti, mapu, výsledek i to, jestli jsi hrál ve full stacku. Zkratka: klávesa N. Ve formuláři uložíš přes Enter.": "Enter a new match or a single Cashout round here — weapon, kills, assists, deaths, map, result, and whether you played as a full stack. Shortcut: the N key. In the form, press Enter to save.", "Přepínej mezi sezónami nebo všemi dohromady. Když vyjde nová sezóna, zvol „+ Nová sezóna…“ — nové záznamy půjdou do ní a statistiky začnou od nuly. Odznaky se počítají za všechny sezóny dohromady.": "Switch between seasons or view them all together. When a new season comes out, choose “+ New season…” — new entries go into it and the stats start from zero. Badges are counted across all seasons together.", "Po přihlášení se tvoje data ukládají do cloudu a uvidíš je na mobilu i na PC. Tečka na ikoně ukazuje stav: zelená = uloženo, oranžová = ukládám, červená = chyba.": "After signing in, your data is saved to the cloud and you'll see it on your phone and PC. The dot on the icon shows the status: green = saved, orange = saving, red = error.", "Přepneš appku mezi tmavým a světlým vzhledem, podle toho, co ti víc sedí.": "Switch the app between a dark and a light look, whichever suits you better.", "Součet za vybranou sezónu — počet zápasů, killy, asisty, smrti, poměr výher a celkové K/D.": "Totals for the selected season — number of matches, kills, assists, deaths, win rate and overall K/D.", "Přepínáním záložek uvidíš trend K/D v čase, výkon podle mapy nebo podle třídy zbraně (Light / Medium / Heavy).": "Switch tabs to see the K/D trend over time, performance by map or by weapon class (Light / Medium / Heavy).", "Tvůj nejlepší zápas, aktuální série výher/proher a nejhranější mapa na jeden pohled.": "Your best match, current win/loss streak and most played map at a glance.", "Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf.": "Weapons ranked by kills, K/D or number of matches. Click a weapon in the list to filter the history and the chart.", "Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi.": "Shows only matches with Light, Medium or Heavy weapons.", "Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy.": "Pick a specific weapon and the table below shows only its matches.", "Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“.": "Switch between Cashout, Point Break, Power Shift and other modes. You can also find stats by mode in the “By mode” tab.", "Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Vedle je filtr podle období. Tvoje filtry a řazení si appka pamatuje.": "Search by weapon, map, mode or note (key /). Next to it is a period filter. The app remembers your filters and sorting.", "Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších.": "The complete list of matches and rounds. On a computer, click a column header to sort by kills, K/D, date and more.", "Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť.": "The two squares create a new entry with the same settings, the pencil edits an entry and the bin deletes it (for a moment you can click “Undo”). Works for each row separately.", "Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh.": "Complete in-game challenges — like 5 wins in a row, 100 kills, or play every map. Completed ones light up, for the others you see your progress.", "Data žijí jen v tomhle prohlížeči. Export stáhne zálohu do souboru, Import ji načte zpět (třeba v jiném prohlížeči) a jen doplní chybějící záznamy.": "Your data lives only in this browser. Export downloads a backup file, Import loads it back (e.g. in another browser) and only adds missing entries.", "Přepni appku mezi češtinou a angličtinou.": "Switch the app between Czech and English.", "Sdílet statistiky": "Share stats", "Sdílet…": "Share…", "Sdílet": "Share", "Šablona": "Template", "Přehled": "Overview", "Formát": "Format", "Široký (1200×630)": "Wide (1200×630)", "Čtverec (1080×1080)": "Square (1080×1080)", "Období": "Period", "Aktuální pohled": "Current view", "Jméno na kartě": "Name on the card", "Stáhnout PNG": "Download PNG", "Kopírovat obrázek": "Copy image", "Obrázek zkopírován": "Image copied", "Kopírování tady nejde — použij Stáhnout PNG.": "Copying isn't available here — use Download PNG.", "Obrázek stažen": "Image downloaded", "Sdílení se nepovedlo.": "Sharing didn't work.", "Zatím nemáš žádná data, ze kterých by šla vytvořit karta.": "You don't have any data to make a card from yet.", "Moje statistiky": "My stats", "Nejlepší zbraně": "Top weapons", "Vývoj K/D": "K/D trend", "Vytvořeno ve Finals Log": "Made with Finals Log", "Mapy": "Maps", "Sdílení": "Sharing", "Vytvoř hezkou kartu se svými statistikami jako obrázek — stáhni ji, zkopíruj nebo ji pošli rovnou na Discord.": "Create a nice card with your stats as an image — download it, copy it or send it straight to Discord.", "např. tvoje přezdívka": "e.g. your nickname"};
+  function reEsc(k){ return k.replace(/[.*+?^${}()|[\]\\\/]/g, "\\$&"); }
+  function mkRe(keys){
+    keys.sort(function(a, b){ return b.length - a.length; });
+    return new RegExp("(^|[^\\p{L}])(" + keys.map(reEsc).join("|") + ")(?![\\p{L}])", "gu");
+  }
+  var phraseKeys = [], wordKeys = [];
+  Object.keys(GLOSS).forEach(function(k){ (k.indexOf(" ") !== -1 ? phraseKeys : wordKeys).push(k); });
+  var rePhrase = mkRe(phraseKeys), reWord = mkRe(wordKeys);
+  function cnt(n, one, many){ return n + " " + (n === "1" ? one : many); }
+  var SPECIALS = [
+    [/Zobrazit víc \(zbývá (\d+)\)/g, function(m, n){ return "Show more (" + n + " left)"; }],
+    [/(\d+) výher v řadě/g, function(m, n){ return cnt(n, "win in a row", "wins in a row"); }],
+    [/(\d+) proher v řadě/g, function(m, n){ return cnt(n, "loss in a row", "losses in a row"); }],
+    [/(\d+) (?:záznamů|záznamy|záznam)(?![\p{L}])/gu, function(m, n){ return cnt(n, "entry", "entries"); }],
+    [/(\d+) (?:zápasů|zápasy|zápas)(?![\p{L}])/gu, function(m, n){ return cnt(n, "match", "matches"); }],
+    [/(\d+) (?:dní|dny|den)(?![\p{L}])/gu, function(m, n){ return cnt(n, "day", "days"); }],
+    [/(\d+) (?:killů|killy|kill)(?![\p{L}])/gu, function(m, n){ return cnt(n, "kill", "kills"); }],
+    [/(\d+) (?:asistů|asisty|asist)(?![\p{L}])/gu, function(m, n){ return cnt(n, "assist", "assists"); }]
+  ];
+  var trCache = {};
+  function T(s){
+    if (LANG !== "en" || !s) return s;
+    s = String(s);
+    var hit = trCache[s];
+    if (hit !== undefined) return hit;
+    var r = s.replace(rePhrase, function(m, pre, key){ return pre + GLOSS[key]; });
+    SPECIALS.forEach(function(sp){ r = r.replace(sp[0], sp[1]); });
+    r = r.replace(reWord, function(m, pre, key){ return pre + GLOSS[key]; });
+    trCache[s] = r;
+    return r;
+  }
+  function alertT(s){ return window.alert(T(s)); }
+  function confirmT(s){ return window.confirm(T(s)); }
+  function promptT(s, d){ return window.prompt(T(s), d); }
+
+  // translates the page itself (text and a few attributes) and remembers the Czech original
+  var TR_ATTRS = ["title", "placeholder", "aria-label", "data-label"];
+  var origT = new WeakMap(), origA = new WeakMap();
+  function skipEl(el){ return !el || (el.closest && el.closest('script,style,textarea,[translate="no"]')); }
+  function trText(n){
+    var v = n.nodeValue;
+    if (!v || !v.trim()) return;
+    var rec = origT.get(n);
+    if (rec && v === rec.en) return;
+    if (skipEl(n.parentElement)) return;
+    var out = T(v);
+    if (out !== v){ origT.set(n, { cs: v, en: out }); n.nodeValue = out; }
+    else if (rec) origT.delete(n);
+  }
+  function trAttr(el){
+    if (skipEl(el)) return;
+    var rec = origA.get(el) || {};
+    TR_ATTRS.forEach(function(a){
+      var v = el.getAttribute(a);
+      if (v == null) return;
+      var r = rec[a];
+      if (r && v === r.en) return;
+      var out = T(v);
+      if (out !== v){ rec[a] = { cs: v, en: out }; el.setAttribute(a, out); }
+      else if (r) delete rec[a];
+    });
+    origA.set(el, rec);
+  }
+  function trTree(root){
+    if (root.nodeType === 3){ trText(root); return; }
+    if (root.nodeType !== 1 || /^(SCRIPT|STYLE)$/.test(root.tagName)) return;
+    trAttr(root);
+    root.querySelectorAll("[title],[placeholder],[aria-label],[data-label]").forEach(trAttr);
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n;
+    while ((n = w.nextNode())) trText(n);
+  }
+  function restoreAll(){
+    var w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n;
+    while ((n = w.nextNode())){
+      var r = origT.get(n);
+      if (r && n.nodeValue === r.en) n.nodeValue = r.cs;
+      origT.delete(n);
+    }
+    document.querySelectorAll("[title],[placeholder],[aria-label],[data-label]").forEach(function(el){
+      var rec = origA.get(el);
+      if (!rec) return;
+      Object.keys(rec).forEach(function(a){ if (el.getAttribute(a) === rec[a].en) el.setAttribute(a, rec[a].cs); });
+      origA.delete(el);
+    });
+  }
+  var langObserver = new MutationObserver(function(records){
+    if (LANG !== "en") return;
+    records.forEach(function(r){
+      if (r.type === "childList") r.addedNodes.forEach(function(nd){ trTree(nd); });
+      else if (r.type === "characterData") trText(r.target);
+      else if (r.type === "attributes") trAttr(r.target);
+    });
+    langObserver.takeRecords();
+  });
+  langObserver.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: TR_ATTRS });
+  function setLang(l){
+    LANG = l;
+    try { localStorage.setItem(LANG_KEY, l); } catch(e){}
+    document.documentElement.lang = l;
+    if (l === "en") trTree(document.body); else restoreAll();
+    langObserver.takeRecords();
+    document.getElementById("langBtn").textContent = l === "en" ? "EN" : "CZ";
+    renderAll();
+    renderAuthUI();
+    if (document.getElementById("shareOverlay").classList.contains("show")) drawShare();
+  }
+  document.getElementById("langBtn").addEventListener("click", function(){ setLang(LANG === "en" ? "cs" : "en"); });
+
   var WEAPONS = {
     Light: ["M11","ARN-220","XP-54","V9S","LH1","93R","M26 Matter","Recurve Bow","Throwing Knives","Sword","SR-84","SH1900","Dagger"],
     Medium: ["CB-01 Repeater","FCAR","P90","AKM","FAMAS","Chimera XB","Cerberus 12GA","R.357","CL-40","Pike-556","Dual Blades","Riot Shield","Model 1887"],
@@ -966,7 +1246,11 @@
     if (btn) btn.innerHTML = mode === "light" ? MOON_ICON : SUN_ICON;
   }
   function getTheme(){
-    try { return localStorage.getItem(THEME_KEY) || "dark"; } catch(e){ return "dark"; }
+    try {
+      var saved = localStorage.getItem(THEME_KEY);
+      if (saved) return saved;
+    } catch(e){}
+    return "dark";
   }
   function setTheme(mode){
     try { localStorage.setItem(THEME_KEY, mode); } catch(e){}
@@ -993,6 +1277,8 @@
     resultFilter: "",
     mapFilter: "",
     modeFilter: "",
+    search: "",
+    range: "",
     shown: 25,
     lastSig: ""
   };
@@ -1000,6 +1286,8 @@
   var selectedFullStack = null;
   var selectedRound = null;
   var selectedSide = null;
+  var justAddedId = null;
+  var celebrateOk = false;
   var currentMatchId = null;
   var editingId = null;
   function genId(){ return Date.now()+"-"+Math.random().toString(36).slice(2,7); }
@@ -1098,13 +1386,13 @@
   document.getElementById("mapSelect").addEventListener("focus", function(){ mapPrev = this.value; });
   document.getElementById("weaponSelect").addEventListener("change", function(){
     if (this.value !== "__add_weapon__"){ weaponPrev = this.value; return; }
-    var name = (prompt("Název zbraně:") || "").trim();
+    var name = (promptT("Název zbraně:") || "").trim();
     var restore = (weaponPrev && WEAPON_CLASS[weaponPrev]) ? weaponPrev : Object.keys(WEAPON_CLASS)[0];
     if (!name){ this.value = restore; return; }
     if (!WEAPON_CLASS[name]){
-      var clsIn = (prompt("Třída? Napiš Light, Medium nebo Heavy:", "Medium") || "").trim().toLowerCase();
+      var clsIn = (promptT("Třída? Napiš Light, Medium nebo Heavy:", "Medium") || "").trim().toLowerCase();
       var cls = { light:"Light", medium:"Medium", heavy:"Heavy" }[clsIn];
-      if (!cls){ alert("Třída musí být Light, Medium nebo Heavy."); this.value = restore; return; }
+      if (!cls){ alertT("Třída musí být Light, Medium nebo Heavy."); this.value = restore; return; }
       custom.weapons.push({ name: name, cls: cls });
       saveCustom(); rebuildCatalog(); refreshCatalogUI();
     }
@@ -1112,7 +1400,7 @@
   });
   document.getElementById("mapSelect").addEventListener("change", function(){
     if (this.value !== "__add_map__"){ mapPrev = this.value; return; }
-    var name = (prompt("Název mapy:") || "").trim();
+    var name = (promptT("Název mapy:") || "").trim();
     var restore = (mapPrev && MAPS.indexOf(mapPrev) !== -1) ? mapPrev : MAPS[0];
     if (!name){ this.value = restore; return; }
     if (MAPS.indexOf(name) === -1){
@@ -1246,21 +1534,34 @@
   function renderBadges(){
     var stats = computeAchievementStats();
     var unlockedCount = 0;
+    var unlockedIds = [];
     var html = ACHIEVEMENTS.map(function(a){
       var val = a.value(stats);
       var unlocked = val >= a.target;
-      if (unlocked) unlockedCount++;
+      if (unlocked){ unlockedCount++; unlockedIds.push(a.id); }
       var pct = Math.min(100, (val / a.target) * 100);
       return '<div class="badge-card ' + (unlocked ? "unlocked" : "locked") + '">' +
         '<div class="badge-icon">' + BADGE_ICON_SVG + '</div>' +
         '<div class="badge-title">' + a.title + '</div>' +
         '<div class="badge-desc">' + a.desc + '</div>' +
-        '<div class="badge-progress-track"><div class="badge-progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="badge-progress-track"><div class="badge-progress-fill" style="width:0%" data-w="' + pct + '%"></div></div>' +
         '<div class="badge-progress-label">' + Math.min(val, a.target) + ' / ' + a.target + '</div>' +
       '</div>';
     }).join("");
     document.getElementById("badgesGrid").innerHTML = html;
     document.getElementById("badgesCount").textContent = unlockedCount + " / " + ACHIEVEMENTS.length + " splněno";
+    animateBars(document.getElementById("badgesGrid"));
+
+    // celebrate badges that were unlocked by what the user just saved (never for old data loaded at start)
+    var seenKey = sk("finals-log-badges-seen-v1"), seen = null;
+    try { seen = JSON.parse(localStorage.getItem(seenKey)); } catch(e){}
+    var fresh = Array.isArray(seen) ? unlockedIds.filter(function(id){ return seen.indexOf(id) === -1; }) : [];
+    try { localStorage.setItem(seenKey, JSON.stringify(Array.isArray(seen) ? seen.concat(fresh) : unlockedIds)); } catch(e){}
+    if (celebrateOk && fresh.length){
+      var names = ACHIEVEMENTS.filter(function(a){ return fresh.indexOf(a.id) !== -1; }).map(function(a){ return a.title; });
+      showToast("★ Nový odznak: " + names.join(", "));
+      confetti();
+    }
   }
 
   // ---------- highlight cards ----------
@@ -1309,6 +1610,8 @@
   }
 
   // ---------- K/D trend chart ----------
+  var trendAvg = false;
+  try { trendAvg = localStorage.getItem("finals-log-trendavg") === "1"; } catch(e){}
   function renderTrendChart(){
     var wrap = document.getElementById("trendChartWrap");
     var source = state.weaponFilter
@@ -1317,36 +1620,80 @@
     var pts = source.slice().sort(function(a,b){ return a.ts - b.ts; });
     if (!pts.length){
       wrap.innerHTML = '<div class="empty"><div class="big-icon">[ ∅ ]</div>'+
-        (state.weaponFilter ? 'Zatím žádná data pro '+state.weaponFilter+'.' : 'Zatím žádná data pro graf.')+
+        (state.weaponFilter ? 'Zatím žádná data pro '+esc(state.weaponFilter)+'.' : 'Zatím žádná data pro graf.')+
         '</div>';
       return;
     }
-    var w=680, h=190, padL=8, padR=8, padT=16, padB=8;
-    var kds = pts.map(function(p){ return kd(p.kills,p.deaths); });
-    var maxKD = Math.max(1, Math.max.apply(null, kds));
-    var stepX = pts.length > 1 ? (w-padL-padR)/(pts.length-1) : 0;
-    function xFor(i){ return padL + stepX*i; }
-    function yFor(v){ return h-padB - (v/maxKD)*(h-padT-padB); }
-    var avgKD = kds.reduce(function(s,v){ return s+v; },0)/kds.length;
-    var dotR = pts.length > 80 ? 1.8 : (pts.length > 40 ? 2.4 : (pts.length > 20 ? 3 : 3.6));
+    var w = Math.max(300, (wrap.clientWidth || 720) - 40), h = 200, padL = 10, padR = 10, padT = 20, padB = 12;
+    var kds = pts.map(function(p){ return kd(p.kills, p.deaths); });
+    var ma = pts.map(function(p, i){
+      var k = 0, d = 0;
+      for (var j = Math.max(0, i - 9); j <= i; j++){ k += pts[j].kills; d += pts[j].deaths; }
+      return kd(k, d);
+    });
+    var maxKD = Math.max(1, Math.max.apply(null, kds), trendAvg ? Math.max.apply(null, ma) : 0);
+    var stepX = pts.length > 1 ? (w - padL - padR) / (pts.length - 1) : 0;
+    function xFor(i){ return pts.length > 1 ? padL + stepX * i : w / 2; }
+    function yFor(v){ return h - padB - (v / maxKD) * (h - padT - padB); }
+    var avgKD = kds.reduce(function(s, v){ return s + v; }, 0) / kds.length;
+    var dotR = pts.length > 80 ? 1.9 : (pts.length > 40 ? 2.5 : (pts.length > 20 ? 3.1 : 3.8));
 
-    var linePts = pts.map(function(p,i){ return xFor(i).toFixed(1)+","+yFor(kd(p.kills,p.deaths)).toFixed(1); }).join(" ");
-    var dots = pts.map(function(p,i){
-      var v = kd(p.kills,p.deaths);
+    var line = pts.map(function(p, i){ return xFor(i).toFixed(1) + "," + yFor(kds[i]).toFixed(1); }).join(" ");
+    var area = xFor(0).toFixed(1) + "," + (h - padB) + " " + line + " " + xFor(pts.length - 1).toFixed(1) + "," + (h - padB);
+    var maLine = pts.map(function(p, i){ return xFor(i).toFixed(1) + "," + yFor(ma[i]).toFixed(1); }).join(" ");
+    var dots = pts.map(function(p, i){
       var color = p.result === "win" ? "var(--win-c)" : (p.result === "loss" ? "var(--loss-c)" : "var(--accent-2)");
-      return '<circle cx="'+xFor(i).toFixed(1)+'" cy="'+yFor(v).toFixed(1)+'" r="'+dotR+'" style="fill:'+color+'"><title>'+esc(p.weapon)+' · K/D '+v.toFixed(2)+(p.map?' · '+esc(p.map):'')+'</title></circle>';
+      return '<circle class="trend-dot" cx="' + xFor(i).toFixed(1) + '" cy="' + yFor(kds[i]).toFixed(1) + '" r="' + dotR + '" style="fill:' + color + '"/>';
     }).join("");
 
     wrap.innerHTML =
-      '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:190px;overflow:visible;">' +
-        '<line x1="'+padL+'" y1="'+yFor(avgKD).toFixed(1)+'" x2="'+(w-padR)+'" y2="'+yFor(avgKD).toFixed(1)+'" style="stroke:var(--panel-border-hover)" stroke-dasharray="4 4" stroke-width="1"/>' +
-        '<text x="'+(w-padR)+'" y="'+(yFor(avgKD)-7).toFixed(1)+'" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" style="fill:var(--text-dim)">průměr '+avgKD.toFixed(2)+'</text>' +
-        '<polyline points="'+linePts+'" fill="none" style="stroke:var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" style="width:100%;height:200px;overflow:visible;touch-action:pan-y;">' +
+        '<defs><linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.28"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>' +
+        '<line x1="' + padL + '" y1="' + yFor(avgKD).toFixed(1) + '" x2="' + (w - padR) + '" y2="' + yFor(avgKD).toFixed(1) + '" style="stroke:var(--panel-border-hover)" stroke-dasharray="4 4" stroke-width="1"/>' +
+        '<text x="' + (w - padR) + '" y="' + (yFor(avgKD) - 7).toFixed(1) + '" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" style="fill:var(--text-dim)">průměr ' + avgKD.toFixed(2) + '</text>' +
+        (pts.length > 1 ? '<polygon class="trend-area" points="' + area + '" style="fill:url(#trendFill)"/>' : '') +
+        '<line class="trend-guide" x1="0" y1="' + padT + '" x2="0" y2="' + (h - padB) + '" style="stroke:var(--panel-border-hover);opacity:0" stroke-width="1"/>' +
+        (trendAvg && pts.length > 1 ? '<polyline class="trend-ma" pathLength="1" points="' + maLine + '" fill="none" style="stroke:var(--light-c)" stroke-width="2" stroke-dasharray="1" stroke-linejoin="round" stroke-linecap="round"/>' : '') +
+        '<polyline class="trend-line" pathLength="1" points="' + line + '" fill="none" style="stroke:var(--accent)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>' +
         dots +
+        '<circle class="trend-hl" r="7" cx="0" cy="0" style="fill:none;stroke:var(--text);opacity:0" stroke-width="1.6"/>' +
       '</svg>' +
-      '<div style="font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:6px;">'+
-        (state.weaponFilter ? pts.length+' zápasů s '+state.weaponFilter : 'všech '+pts.length+' zápasů')+
-        ' · barva bodu = výhra / prohra / nerozhodnuto</div>';
+      '<div class="chart-tip"></div>' +
+      '<div class="trend-foot"><span>' +
+        (state.weaponFilter ? pts.length + ' zápasů s ' + esc(state.weaponFilter) : 'všech ' + pts.length + ' zápasů') +
+        ' · barva bodu = výhra / prohra / nerozhodnuto</span>' +
+        '<button type="button" class="chip' + (trendAvg ? ' active' : '') + '" id="trendAvgBtn">Klouzavý průměr (10)</button></div>';
+
+    document.getElementById("trendAvgBtn").addEventListener("click", function(){
+      trendAvg = !trendAvg;
+      try { localStorage.setItem("finals-log-trendavg", trendAvg ? "1" : "0"); } catch(e){}
+      renderTrendChart();
+    });
+
+    var svg = wrap.querySelector("svg"), tip = wrap.querySelector(".chart-tip");
+    var hl = wrap.querySelector(".trend-hl"), guide = wrap.querySelector(".trend-guide");
+    function hide(){ tip.style.opacity = 0; hl.style.opacity = 0; guide.style.opacity = 0; }
+    svg.addEventListener("pointermove", function(ev){
+      var r = svg.getBoundingClientRect();
+      var x = (ev.clientX - r.left) / r.width * w;
+      var i = stepX ? Math.round((x - padL) / stepX) : 0;
+      i = Math.max(0, Math.min(pts.length - 1, i));
+      var p = pts[i], cx = xFor(i), cy = yFor(kds[i]);
+      hl.setAttribute("cx", cx); hl.setAttribute("cy", cy); hl.style.opacity = 1;
+      guide.setAttribute("x1", cx); guide.setAttribute("x2", cx); guide.style.opacity = 1;
+      tip.innerHTML = '<b>' + esc(p.weapon) + '</b> <span class="dim">· ' + esc(modeOf(p)) + (p.map ? ' · ' + esc(p.map) : '') + '</span><br>' +
+        'K/D <b>' + kds[i].toFixed(2) + '</b> <span class="dim">(' + p.kills + 'K / ' + p.assists + 'A / ' + p.deaths + 'D)</span><br>' +
+        '<span class="dim">' + fmtDate(p.ts) + (p.result === "win" ? ' · výhra' : (p.result === "loss" ? ' · prohra' : '')) + '</span>';
+      var wr = wrap.getBoundingClientRect();
+      var ox = r.left - wr.left, oy = r.top - wr.top;
+      var tx = ox + cx / w * r.width;
+      var half = tip.offsetWidth / 2;
+      tx = Math.max(half + 4, Math.min(ox + r.width - half - 4, tx));
+      tip.style.left = tx + "px";
+      tip.style.top = (oy + cy / h * r.height) + "px";
+      tip.style.opacity = 1;
+    });
+    svg.addEventListener("pointerleave", hide);
   }
 
   // ---------- group stats (by map / by class) ----------
@@ -1367,11 +1714,176 @@
       var wr = a.winrate !== null ? a.winrate+"% výher" : "bez výsledků";
       return '<div class="group-stat-row">' +
         '<div><div class="group-stat-name">'+esc(a.key)+'</div>' +
-        '<div class="group-stat-bar-track"><div class="group-stat-bar-fill" style="width:'+pct+'%"></div></div></div>' +
+        '<div class="group-stat-bar-track"><div class="group-stat-bar-fill" style="width:0%" data-w="'+pct+'%"></div></div></div>' +
         '<div class="lb-stat"><div class="big">'+a.matches+' zápasů</div><div class="small">K/D '+fmtKD(a.kd)+' · '+wr+'</div></div>' +
       '</div>';
     }).join("");
+    animateBars(list);
   }
+
+  // ---------- activity heatmap ----------
+  function renderHeatmap(){
+    var wrap = document.getElementById("heatmapWrap");
+    if (!entries.length){
+      wrap.innerHTML = '<div class="empty"><div class="big-icon">[ ∅ ]</div>Zatím žádná aktivita.</div>';
+      return;
+    }
+    var avail = Math.max(260, (wrap.clientWidth || 700) - 40 - 28);
+    var weeks = Math.max(10, Math.min(52, Math.floor((avail + 4) / 19)));
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var dow = (today.getDay() + 6) % 7;
+    var start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dow - (weeks - 1) * 7);
+    var counts = {};
+    entries.forEach(function(e){
+      var d = new Date(e.ts), k = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    var max = 1, total = 0, active = 0, best = 0, run = 0;
+    var cells = [], months = [], lastMonth = -1;
+    for (var i = 0; i < weeks * 7; i++){
+      var d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      var key = d.getTime(), n = counts[key] || 0;
+      var future = key > today.getTime();
+      if (!future){
+        total += n; if (n > max) max = n;
+        if (n){ active++; run++; if (run > best) best = run; } else run = 0;
+      }
+      cells.push({ d: d, n: n, future: future });
+      if (i % 7 === 0){
+        var mo = d.getMonth();
+        months.push(mo !== lastMonth ? (LANG === "en" ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"] : ["led","úno","bře","dub","kvě","čvn","čvc","srp","zář","říj","lis","pro"])[mo] : "");
+        lastMonth = mo;
+      }
+    }
+    if (months.length > 1 && months[0] && months[1]) months[0] = "";
+    var html = '<div class="heat-months" style="gap:4px;">' + months.map(function(m){ return '<span style="width:15px;overflow:visible;white-space:nowrap;">' + m + '</span>'; }).join("") + '</div>' +
+      '<div class="heat-body"><div class="heat-days">' + (LANG === "en" ? "<span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span>" : "<span>Po</span><span></span><span>St</span><span></span><span>Pá</span><span></span><span>Ne</span>") + '</div><div class="heat-grid">' +
+      cells.map(function(x){
+        var lvl = x.n ? Math.min(4, Math.max(1, Math.ceil(x.n / max * 4))) : 0;
+        var label = x.d.getDate() + "." + (x.d.getMonth() + 1) + "." + x.d.getFullYear() + " · " + (x.n ? x.n + (x.n === 1 ? " záznam" : (x.n < 5 ? " záznamy" : " záznamů")) : "bez aktivity");
+        return '<div class="heat-cell' + (lvl ? ' l' + lvl : '') + (x.future ? ' future' : '') + '" title="' + label + '"></div>';
+      }).join("") + '</div></div>' +
+      '<div class="heat-legend"><span>Méně</span><div class="heat-cell"></div><div class="heat-cell l1"></div><div class="heat-cell l2"></div><div class="heat-cell l3"></div><div class="heat-cell l4"></div><span>Více</span>' +
+      '<span style="margin-left:auto;">' + total + ' záznamů · ' + active + ' aktivních dní · nejdelší série ' + best + ' ' + (best === 1 ? 'den' : (best < 5 ? 'dny' : 'dní')) + '</span></div>';
+    wrap.innerHTML = html;
+  }
+
+  // ---------- weapon comparison ----------
+  var cmpA = "", cmpB = "";
+  function renderCompare(){
+    var box = document.getElementById("compareBox");
+    var agg = aggregateBy(function(e){ return e.weapon; }).sort(function(a, b){ return b.matches - a.matches; });
+    if (agg.length < 2){
+      box.innerHTML = '<div class="empty"><div class="big-icon">[ ∅ ]</div>Na porovnání potřebuješ záznamy aspoň se dvěma zbraněmi.</div>';
+      return;
+    }
+    var by = {};
+    agg.forEach(function(a){ by[a.key] = a; });
+    if (!by[cmpA]) cmpA = agg[0].key;
+    if (!by[cmpB] || cmpB === cmpA) cmpB = agg.filter(function(a){ return a.key !== cmpA; })[0].key;
+    var opts = function(sel){ return agg.map(function(a){ return '<option value="' + esc(a.key) + '"' + (a.key === sel ? ' selected' : '') + '>' + esc(a.key) + ' (' + a.matches + ')</option>'; }).join(""); };
+    var A = by[cmpA], B = by[cmpB];
+    var rows = [
+      ["Zápasy", A.matches, B.matches, 0, true],
+      ["Killy", A.kills, B.kills, 0, true],
+      ["Asisty", A.assists, B.assists, 0, true],
+      ["Smrti", A.deaths, B.deaths, 0, false],
+      ["K/D", A.kd, B.kd, 2, true],
+      ["Ø killů / zápas", A.kills / A.matches, B.kills / B.matches, 1, true],
+      ["Winrate", A.winrate === null ? 0 : A.winrate, B.winrate === null ? 0 : B.winrate, 0, true, "%"]
+    ];
+    box.innerHTML = '<div class="cmp-selects"><select id="cmpA" class="filter-select">' + opts(cmpA) + '</select><span class="vs">VS</span><select id="cmpB" class="filter-select">' + opts(cmpB) + '</select></div>' +
+      rows.map(function(r){
+        var a = r[1], b = r[2], sum = a + b, pct = sum ? (a / sum * 100) : 50;
+        var better = a === b ? 0 : ((a > b) === r[4] ? 1 : 2);
+        var f = function(v){ return v.toFixed(r[3]) + (r[5] || ""); };
+        return '<div class="cmp-row"><div class="cmp-val a' + (better === 1 ? ' win' : '') + '">' + f(a) + '</div>' +
+          '<div><div class="cmp-label">' + r[0] + '</div><div class="cmp-track"><i style="width:0%" data-w="' + pct.toFixed(1) + '%"></i></div></div>' +
+          '<div class="cmp-val b' + (better === 2 ? ' win' : '') + '">' + f(b) + '</div></div>';
+      }).join("");
+    animateBars(box);
+    document.getElementById("cmpA").addEventListener("change", function(){ cmpA = this.value; renderCompare(); });
+    document.getElementById("cmpB").addEventListener("change", function(){ cmpB = this.value; renderCompare(); });
+  }
+
+  // ---------- remember filters / sort between visits ----------
+  var UI_KEY = "finals-log-ui-v1";
+  function saveUi(){
+    try {
+      localStorage.setItem(UI_KEY, JSON.stringify({
+        classFilter: state.classFilter, resultFilter: state.resultFilter, mapFilter: state.mapFilter, modeFilter: state.modeFilter,
+        range: state.range, search: state.search, lbSort: state.lbSort, tableSort: state.tableSort, statsTab: statsTab
+      }));
+    } catch(e){}
+  }
+  function loadUi(){
+    var u = null;
+    try { u = JSON.parse(localStorage.getItem(UI_KEY)); } catch(e){}
+    if (!u) return;
+    var pick = function(v, allowed){ return allowed.indexOf(v) !== -1 ? v : null; };
+    state.classFilter = pick(u.classFilter, ["All", "Light", "Medium", "Heavy"]) || "All";
+    state.resultFilter = pick(u.resultFilter, ["", "win", "loss"]) || "";
+    state.range = pick(u.range, ["", "today", "7", "30"]) || "";
+    state.lbSort = pick(u.lbSort, ["kills", "kd", "matches"]) || "kills";
+    statsTab = pick(u.statsTab, ["trend", "maps", "classes", "modes", "sides", "activity", "compare"]) || "trend";
+    state.mapFilter = MAPS.indexOf(u.mapFilter) !== -1 ? u.mapFilter : "";
+    state.modeFilter = MODE_ROUNDS.hasOwnProperty(u.modeFilter) ? u.modeFilter : "";
+    state.search = typeof u.search === "string" ? u.search.slice(0, 60) : "";
+    if (u.tableSort && ["weapon","class","mode","side","map","result","fullStack","round","kills","assists","deaths","kd","ts","season","note"].indexOf(u.tableSort.key) !== -1){
+      state.tableSort = { key: u.tableSort.key, dir: u.tableSort.dir === "asc" ? "asc" : "desc" };
+    }
+    var mark = function(sel, attr, val){ document.querySelectorAll(sel).forEach(function(b){ b.classList.toggle("active", b.dataset[attr] === val); }); };
+    mark("#classChips .chip", "class", state.classFilter);
+    mark("#resultFilterChips .chip", "result", state.resultFilter);
+    mark("#lbSortChips .chip", "sort", state.lbSort);
+    mark("#statsTabChips .chip", "tab", statsTab);
+    document.getElementById("mapFilter").value = state.mapFilter;
+    document.getElementById("modeFilter").value = state.modeFilter;
+    document.getElementById("rangeFilter").value = state.range;
+    document.getElementById("searchInput").value = state.search;
+  }
+
+  // ---------- CSV export ----------
+  function csvCell(v){
+    var s = String(v == null ? "" : v);
+    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  document.getElementById("csvBtn").addEventListener("click", function(){
+    var head = ["Datum","Sezóna","Mód","Strana","Zbraň","Třída","Mapa","Výsledek","Stack","Kolo","Killy","Asisty","Smrti","K/D","Poznámka"];
+    var rows = entries.slice().sort(function(a, b){ return a.ts - b.ts; }).map(function(e){
+      return [fmtDate(e.ts), seasonOf(e), modeOf(e), e.side === "attack" ? "Útok" : (e.side === "defend" ? "Obrana" : ""), e.weapon, e["class"], e.map || "",
+        e.result === "win" ? "Výhra" : (e.result === "loss" ? "Prohra" : ""), e.fullStack === "full" ? "Full stack" : (e.fullStack === "solo" ? "Solo/Duo" : ""),
+        e.round || "", e.kills, e.assists, e.deaths, kd(e.kills, e.deaths).toFixed(2), e.note || ""].map(csvCell).join(";");
+    });
+    var blob = new Blob(["\ufeff" + [head.map(csvCell).join(";")].concat(rows).join("\r\n")], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "finals-log-" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    showToast("CSV stažené (" + rows.length + " záznamů)");
+  });
+
+  // ---------- search, period, help dialog, more shortcuts ----------
+  var searchTimer = null;
+  document.getElementById("searchInput").addEventListener("input", function(){
+    var v = this.value;
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(function(){ state.search = v; renderTable(); }, 120);
+  });
+  document.getElementById("searchInput").addEventListener("keydown", function(ev){
+    if (ev.key === "Escape"){ this.value = ""; state.search = ""; renderTable(); this.blur(); }
+  });
+  document.getElementById("rangeFilter").addEventListener("change", function(){ state.range = this.value; renderTable(); });
+  var helpOverlay = document.getElementById("helpOverlay");
+  function openHelp(){ helpOverlay.classList.add("show"); }
+  function closeHelp(){ helpOverlay.classList.remove("show"); }
+  document.getElementById("helpBtn").addEventListener("click", openHelp);
+  document.getElementById("helpClose").addEventListener("click", closeHelp);
+  helpOverlay.addEventListener("click", function(ev){ if (ev.target === helpOverlay) closeHelp(); });
+  document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeHelp(); });
 
   function renderStatsTab(){
     var badge = document.getElementById("statsFilterBadge");
@@ -1386,11 +1898,16 @@
     document.getElementById("tabClasses").style.display = statsTab === "classes" ? "block" : "none";
     document.getElementById("tabModes").style.display = statsTab === "modes" ? "block" : "none";
     document.getElementById("tabSides").style.display = statsTab === "sides" ? "block" : "none";
+    document.getElementById("tabActivity").style.display = statsTab === "activity" ? "block" : "none";
+    document.getElementById("tabCompare").style.display = statsTab === "compare" ? "block" : "none";
     if (statsTab === "trend") renderTrendChart();
     else if (statsTab === "maps") renderGroupStats("mapStatsList", aggregateBy(function(e){ return e.map; }));
     else if (statsTab === "classes") renderGroupStats("classStatsList", aggregateBy(function(e){ return e.class; }), ["Light","Medium","Heavy"]);
     else if (statsTab === "modes") renderGroupStats("modeStatsList", aggregateBy(function(e){ return modeOf(e); }), MODE_IDS);
-    else renderGroupStats("sideStatsList", aggregateBy(function(e){ return e.side === "attack" ? "Útočníci" : (e.side === "defend" ? "Obránci" : null); }), ["Útočníci", "Obránci"]);
+    else if (statsTab === "sides") renderGroupStats("sideStatsList", aggregateBy(function(e){ return e.side === "attack" ? "Útočníci" : (e.side === "defend" ? "Obránci" : null); }), ["Útočníci", "Obránci"]);
+    else if (statsTab === "activity") renderHeatmap();
+    else renderCompare();
+    saveUi();
   }
 
   document.getElementById("statsTabChips").addEventListener("click", function(ev){
@@ -1403,6 +1920,60 @@
   });
 
   // ---------- render hero ----------
+  // ---------- motion helpers ----------
+  var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  var numShown = {};
+  function fmtNum(v, d){ return d ? v.toFixed(d) : String(Math.round(v)); }
+  function setNum(id, to, dec){
+    var el = document.getElementById(id);
+    var from = numShown[id] === undefined ? 0 : numShown[id];
+    numShown[id] = to;
+    if (reduceMotion || from === to){ el.textContent = fmtNum(to, dec); return; }
+    var t0 = performance.now(), dur = 750;
+    function step(now){
+      if (numShown[id] !== to) return;
+      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmtNum(from + (to - from) * e, dec);
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function animateBars(root){
+    var els = root.querySelectorAll("[data-w]");
+    els.forEach(function(el){ el.style.width = reduceMotion ? el.dataset.w : "0%"; });
+    if (reduceMotion) return;
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){
+      els.forEach(function(el){ el.style.width = el.dataset.w; });
+    }); });
+  }
+  function confetti(){
+    if (reduceMotion) return;
+    var cv = document.createElement("canvas");
+    cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:500;";
+    document.body.appendChild(cv);
+    var ctx = cv.getContext("2d");
+    var W = cv.width = window.innerWidth, H = cv.height = window.innerHeight;
+    var colors = ["#ff5b1e", "#ffb020", "#3ddc97", "#5fd0ff", "#ff5b7a", "#ffffff"];
+    var ps = [];
+    for (var i = 0; i < 150; i++){
+      ps.push({ x: W / 2 + (Math.random() - .5) * 180, y: H * .6, vx: (Math.random() - .5) * 15, vy: -Math.random() * 17 - 6,
+        g: .36 + Math.random() * .2, s: 5 + Math.random() * 6, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: colors[i % colors.length] });
+    }
+    var t0 = performance.now();
+    function frame(now){
+      ctx.clearRect(0, 0, W, H);
+      var alive = false;
+      ps.forEach(function(p){
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.vx *= .99; p.r += p.vr;
+        if (p.y < H + 20) alive = true;
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+        ctx.fillRect(-p.s / 2, -p.s / 3, p.s, p.s * .6); ctx.restore();
+      });
+      if (alive && now - t0 < 4500) requestAnimationFrame(frame); else cv.remove();
+    }
+    requestAnimationFrame(frame);
+  }
+
   function renderHero(){
     var totK=0, totD=0, totA=0, wins=0, losses=0;
     viewEntries().forEach(function(e){
@@ -1410,11 +1981,11 @@
       if (e.result === "win") wins++;
       else if (e.result === "loss") losses++;
     });
-    document.getElementById("statMatches").textContent = viewEntries().length;
-    document.getElementById("statKills").textContent = totK;
-    document.getElementById("statDeaths").textContent = totD;
-    document.getElementById("statAssists").textContent = totA;
-    document.getElementById("statKD").textContent = fmtKD(kd(totK,totD));
+    setNum("statMatches", viewEntries().length, 0);
+    setNum("statKills", totK, 0);
+    setNum("statDeaths", totD, 0);
+    setNum("statAssists", totA, 0);
+    setNum("statKD", kd(totK, totD), 2);
     var decided = wins+losses;
     var wr = decided ? Math.round((wins/decided)*100)+"%" : "—";
     document.getElementById("statWins").innerHTML = decided ? (wins + "/" + decided + "<small>" + wr + "</small>") : "0/0";
@@ -1444,7 +2015,7 @@
         '<div class="lb-rank">'+String(i+1).padStart(2,"0")+'</div>'+
         '<div class="lb-main">'+
           '<div class="lb-name-row"><span class="lb-name">'+esc(a.weapon)+'</span><span class="class-pill '+a.class+'">'+a.class+'</span></div>'+
-          '<div class="lb-bar-track"><div class="lb-bar-fill" style="width:'+pct+'%"></div></div>'+
+          '<div class="lb-bar-track"><div class="lb-bar-fill" style="width:0%" data-w="'+pct+'%"></div></div>'+
         '</div>'+
         '<div class="lb-stat"><div class="big">'+statValue+'</div><div class="small">'+statLabel+' · '+a.matches+' zápasů</div></div>';
       row.addEventListener("click", function(){
@@ -1454,6 +2025,7 @@
       });
       list.appendChild(row);
     });
+    animateBars(list);
   }
 
   // ---------- detail strip ----------
@@ -1480,6 +2052,14 @@
       if (state.resultFilter && e.result !== state.resultFilter) return false;
       if (state.mapFilter && e.map !== state.mapFilter) return false;
       if (state.modeFilter && modeOf(e) !== state.modeFilter) return false;
+      if (state.range){
+        var cutoff;
+        if (state.range === "today"){ var t0 = new Date(); t0.setHours(0,0,0,0); cutoff = t0.getTime(); }
+        else cutoff = Date.now() - Number(state.range) * 86400000;
+        if (e.ts < cutoff) return false;
+      }
+      var q = state.search.trim().toLowerCase();
+      if (q && [e.weapon, e["class"], e.map, modeOf(e), e.note].join(" ").toLowerCase().indexOf(q) === -1) return false;
       return true;
     });
   }
@@ -1503,11 +2083,12 @@
       return 0;
     });
 
-    var sig = [state.classFilter, state.weaponFilter, state.mapFilter, state.modeFilter, state.resultFilter, seasonData.view, key, dir].join("|");
+    var sig = [state.classFilter, state.weaponFilter, state.mapFilter, state.modeFilter, state.search, state.range, state.resultFilter, seasonData.view, key, dir].join("|");
     if (sig !== state.lastSig){ state.shown = 25; state.lastSig = sig; }
     var totalRows = rows.length;
     var hiddenRows = Math.max(0, totalRows - state.shown);
     rows = rows.slice(0, state.shown);
+    saveUi();
     document.getElementById("moreWrap").style.display = hiddenRows ? "block" : "none";
     document.getElementById("moreBtn").textContent = "Zobrazit víc (zbývá " + hiddenRows + ")";
     document.getElementById("logCount").textContent = totalRows;
@@ -1518,6 +2099,8 @@
     var prevMatchId = null;
     rows.forEach(function(r, idx){
       var tr = document.createElement("tr");
+      tr.dataset.id = r.id;
+      if (justAddedId && r.id === justAddedId) tr.classList.add("flash");
       if (idx > 0 && r.matchId && r.matchId === prevMatchId){
         // same match as previous row, no extra border
       } else if (r.matchId){
@@ -1551,7 +2134,7 @@
         '<td class="kd-cell" data-label="K/D">'+fmtKD(r.kd)+'</td>'+
         '<td class="date" data-label="Datum">'+fmtDate(r.ts)+'</td>'+
         '<td class="num" data-label="Sezóna">S'+r.season+'</td>'+
-        '<td class="note-cell" data-label="Poznámka" title="'+esc(r.note)+'">'+(r.note ? esc(r.note) : '<span style="color:var(--text-dimmer)">—</span>')+'</td>'+
+        '<td class="note-cell" data-label="Poznámka">'+(r.note ? '<span translate="no" title="'+esc(r.note)+'">'+esc(r.note)+'</span>' : '<span style="color:var(--text-dimmer)">—</span>')+'</td>'+
         '<td class="actions-cell"><div class="row-actions">'+
           '<button class="row-dup" data-id="'+r.id+'" title="Nový záznam se stejným nastavením">'+
             '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.5" y="4.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 2.5v-.2A.8.8 0 0 0 8.7 1.5H2.3a.8.8 0 0 0-.8.8v6.4a.8.8 0 0 0 .8.8h.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'+
@@ -1616,7 +2199,7 @@
   document.getElementById("seasonSelect").addEventListener("change", function(){
     if (this.value === "__new__"){
       var next = Math.max.apply(null, seasonData.list) + 1;
-      if (confirm("Začít Sezónu " + next + "? Nové záznamy se budou ukládat do ní a statistiky začnou od nuly (starší sezóny zůstanou).")){
+      if (confirmT("Začít Sezónu " + next + "? Nové záznamy se budou ukládat do ní a statistiky začnou od nuly (starší sezóny zůstanou).")){
         seasonData.list.push(next); seasonData.current = next; seasonData.view = next; saveSeasons();
       }
       renderAll();
@@ -1967,6 +2550,7 @@
       });
     }
 
+    justAddedId = editingId || entries[entries.length - 1].id;
     setLastWeapon(v.weapon);
     setLastForm({ weapon: v.weapon, map: v.map, stack: selectedFullStack, mode: modeVal });
     save();
@@ -1978,7 +2562,9 @@
     var shouldContinue = !wasEditing && selectedResult === "win" && round && round < 3;
 
     saveCurrentRound();
+    celebrateOk = true;
     renderAll();
+    celebrateOk = false;
 
     if (shouldContinue){
       // won this round and more rounds remain — automatically open the next round
@@ -1999,15 +2585,18 @@
   var TOUR_STEPS = [
     { selector:"#openAdd", title:"Přidat zápas", text:"Tady zadáš nový zápas nebo jedno kolo Cashoutu — zbraň, killy, asisty, smrti, mapu, výsledek i to, jestli jsi hrál ve full stacku. Zkratka: klávesa N. Ve formuláři uložíš přes Enter." },
     { selector:"#seasonSelect", title:"Sezóny", text:"Přepínej mezi sezónami nebo všemi dohromady. Když vyjde nová sezóna, zvol „+ Nová sezóna…“ — nové záznamy půjdou do ní a statistiky začnou od nuly. Odznaky se počítají za všechny sezóny dohromady." },
+    { selector:"#langBtn", title:"Jazyk", text:"Přepni appku mezi češtinou a angličtinou." },
     { selector:"#accountBtn", title:"Účet a cloud", text:"Po přihlášení se tvoje data ukládají do cloudu a uvidíš je na mobilu i na PC. Tečka na ikoně ukazuje stav: zelená = uloženo, oranžová = ukládám, červená = chyba." },
     { selector:"#themeToggle", title:"Světlý / tmavý režim", text:"Přepneš appku mezi tmavým a světlým vzhledem, podle toho, co ti víc sedí." },
     { selector:".hero", title:"Celkový přehled", text:"Součet za vybranou sezónu — počet zápasů, killy, asisty, smrti, poměr výher a celkové K/D." },
     { selector:"#statsTabChips", title:"Statistika", text:"Přepínáním záložek uvidíš trend K/D v čase, výkon podle mapy nebo podle třídy zbraně (Light / Medium / Heavy)." },
+    { selector:"#shareBtn2", title:"Sdílení", text:"Vytvoř hezkou kartu se svými statistikami jako obrázek — stáhni ji, zkopíruj nebo ji pošli rovnou na Discord." },
     { selector:"#highlightRow", title:"Rychlé přehledy", text:"Tvůj nejlepší zápas, aktuální série výher/proher a nejhranější mapa na jeden pohled." },
     { selector:"#lbSortChips", title:"Žebříček zbraní", text:"Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf." },
     { selector:"#classChips", title:"Filtr podle třídy", text:"Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi." },
     { selector:"#weaponFilter", title:"Filtr podle zbraně", text:"Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy." },
     { selector:"#modeFilter", title:"Filtr podle módu", text:"Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“." },
+    { selector:"#searchInput", title:"Hledání a období", text:"Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Vedle je filtr podle období. Tvoje filtry a řazení si appka pamatuje." },
     { selector:"#logHeading", title:"Historie zápasů", text:"Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších." },
     { selector:".row-actions", title:"Úprava a mazání", text:"Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť." },
     { selector:"#badgesGrid", title:"Odznaky", text:"Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh." },
@@ -2500,7 +3089,7 @@
     try {
       var res = mergeData(guestData());
       showToast("Nahráno do účtu: " + res.added + " záznamů" + (res.skipped ? " · " + res.skipped + " už existovalo" : ""));
-    } catch(e){ alert("Nahrání se nepodařilo."); }
+    } catch(e){ alertT("Nahrání se nepodařilo."); }
   }
   function offerMigration(){
     if (!session || (syncState !== "ok" && syncState !== "syncing")) return;
@@ -2510,7 +3099,7 @@
     try { done = !!localStorage.getItem(flag); } catch(e){}
     if (!g.entries.length || done) return;
     try { localStorage.setItem(flag, "1"); } catch(e){}
-    if (confirm("V tomhle prohlížeči je " + g.entries.length + " záznamů uloženo bez účtu. Nahrát je do tvého účtu?")) importGuest();
+    if (confirmT("V tomhle prohlížeči je " + g.entries.length + " záznamů uloženo bez účtu. Nahrát je do tvého účtu?")) importGuest();
   }
 
   // ---------- sign in / sign up UI ----------
@@ -2565,6 +3154,7 @@
     var dot = document.getElementById("syncDot");
     var colors = { ok: "var(--win-c)", syncing: "var(--accent-2)", error: "var(--loss-c)", auth: "var(--loss-c)", offline: "var(--text-dimmer)" };
     dot.style.background = session ? (colors[syncState] || "transparent") : "transparent";
+    dot.classList.toggle("busy", !!session && syncState === "syncing");
     document.getElementById("accountBtn").title = session ? ("Účet: " + session.user.email + " — " + syncText()) : "Přihlásit se";
     var dismissed = false;
     try { dismissed = sessionStorage.getItem("finals-log-bar-dismissed") === "1"; } catch(e){}
@@ -2572,7 +3162,7 @@
     document.getElementById("footerText").textContent = "FINALS LOG · " +
       (session ? "přihlášen jako " + session.user.email + " · data v cloudu" : "data se ukládají jen v tomto prohlížeči");
     var st = document.getElementById("acctStatus");
-    if (st) st.textContent = syncText() + (lastSync && syncState === "ok" ? " · " + lastSync.toLocaleTimeString("cs-CZ") : "");
+    if (st) st.textContent = syncText() + (lastSync && syncState === "ok" ? " · " + lastSync.toLocaleTimeString(LANG === "en" ? "en-GB" : "cs-CZ") : "");
   }
 
   function fieldHtml(id, label, type, ac){
@@ -2688,13 +3278,13 @@
   async function signOut(){
     if (hasPending()){
       await flush();
-      if (hasPending() && !confirm("Některé změny se ještě neuložily do cloudu a při odhlášení se ztratí. Odhlásit i tak?")) return;
+      if (hasPending() && !confirmT("Některé změny se ještě neuložily do cloudu a při odhlášení se ztratí. Odhlásit i tak?")) return;
     }
     try {
       await fetch(SUPABASE_URL + "/auth/v1/logout?scope=local", { method: "POST", headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + session.access_token } });
     } catch(e){}
     var uid = session.user.id;
-    [STORE_KEY, CUSTOM_KEY, SEASON_KEY, LAST_FORM_KEY, LAST_WEAPON_KEY, PENDING_KEY].forEach(function(k){
+    [STORE_KEY, CUSTOM_KEY, SEASON_KEY, LAST_FORM_KEY, LAST_WEAPON_KEY, PENDING_KEY, "finals-log-badges-seen-v1"].forEach(function(k){
       try { localStorage.removeItem(k + ":" + uid); } catch(e){}
     });
     try { localStorage.removeItem(SESSION_KEY); } catch(e){}
@@ -2721,6 +3311,356 @@
     handleFlash();
     if (session) pullCloud().then(offerMigration);
   }
+
+  // ---------- shareable stats card (image for Discord etc.) ----------
+  var SHARE_KEY = "finals-log-share-v1";
+  var share = { template: "overview", weapon: "", format: "wide", scope: "view", name: "" };
+  try {
+    var savedShare = JSON.parse(localStorage.getItem(SHARE_KEY));
+    if (savedShare) ["template", "format", "scope", "name"].forEach(function(k){ if (typeof savedShare[k] === "string") share[k] = savedShare[k].slice(0, 24); });
+  } catch(e){}
+  var F_DISP = '"Space Grotesk", "Inter", "Segoe UI", sans-serif';
+  var F_MONO = '"JetBrains Mono", "SF Mono", Consolas, monospace';
+  var CLASS_COL = { Light: "#5fd0ff", Medium: "#ffcf4d", Heavy: "#ff5b7a" };
+  var shareOverlay = document.getElementById("shareOverlay");
+
+  function ensureFonts(){
+    if (!document.fonts || !document.fonts.load) return Promise.resolve();
+    var loads = ['700 40px "Space Grotesk"', '600 20px "Space Grotesk"', '700 40px "JetBrains Mono"', '500 14px "JetBrains Mono"']
+      .map(function(f){ return document.fonts.load(f).catch(function(){}); });
+    return Promise.race([Promise.all(loads), new Promise(function(r){ setTimeout(r, 1800); })]);
+  }
+  function rr(c, x, y, w, h, r){
+    c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+  }
+  function box(c, x, y, w, h){
+    rr(c, x, y, w, h, 18);
+    c.fillStyle = "rgba(255,255,255,0.045)"; c.fill();
+    c.strokeStyle = "rgba(255,255,255,0.09)"; c.lineWidth = 1; c.stroke();
+  }
+  function txt(c, s, x, y, font, color, align){
+    c.font = font; c.fillStyle = color; c.textAlign = align || "left"; c.textBaseline = "alphabetic"; c.fillText(s, x, y);
+  }
+  function ell(c, s, maxW){
+    s = String(s);
+    if (c.measureText(s).width <= maxW) return s;
+    while (s.length > 1 && c.measureText(s + "…").width > maxW) s = s.slice(0, -1);
+    return s + "…";
+  }
+  function glow(c, W, H, x, y, r, col){
+    var g = c.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, col); g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+  }
+  function drawBg(c, W, H){
+    var g = c.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "#0a0a0c"); g.addColorStop(1, "#16161b");
+    c.fillStyle = g; c.fillRect(0, 0, W, H);
+    glow(c, W, H, W * .1, H * .02, W * .6, "rgba(255,91,30,0.30)");
+    glow(c, W, H, W * .98, H * .18, W * .45, "rgba(95,208,255,0.15)");
+    glow(c, W, H, W * .62, H * 1.05, W * .5, "rgba(255,176,32,0.13)");
+    c.fillStyle = "rgba(255,255,255,0.05)";
+    for (var gx = W * .58; gx < W - 20; gx += 22) for (var gy = 24; gy < 120; gy += 22){ c.beginPath(); c.arc(gx, gy, 1.3, 0, Math.PI * 2); c.fill(); }
+    rr(c, 1, 1, W - 2, H - 2, 26); c.strokeStyle = "rgba(255,255,255,0.09)"; c.lineWidth = 2; c.stroke();
+  }
+  function drawHeader(c, W, sub, name){
+    var g = c.createLinearGradient(48, 36, 102, 90);
+    g.addColorStop(0, "#ff5b1e"); g.addColorStop(1, "#c93d0e");
+    rr(c, 48, 36, 54, 54, 15); c.fillStyle = g; c.fill();
+    c.strokeStyle = "#0a0a0c"; c.lineWidth = 4; c.lineCap = "round";
+    c.beginPath(); c.arc(75, 63, 10, 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.moveTo(75, 41); c.lineTo(75, 51); c.moveTo(75, 75); c.lineTo(75, 85); c.moveTo(53, 63); c.lineTo(63, 63); c.moveTo(87, 63); c.lineTo(97, 63); c.stroke();
+    c.fillStyle = "#0a0a0c"; c.beginPath(); c.arc(75, 63, 2.6, 0, Math.PI * 2); c.fill();
+    txt(c, sub, 116, 52, "600 12px " + F_MONO, "#ffb020");
+    txt(c, "FINALS LOG", 116, 82, "700 30px " + F_DISP, "#f2f1ee");
+    if (name){
+      c.font = "700 28px " + F_DISP;
+      txt(c, ell(c, name, W * .38), W - 48, 72, "700 28px " + F_DISP, "#f2f1ee", "right");
+    }
+  }
+  function drawFooter(c, W, H){
+    txt(c, T("Vytvořeno ve Finals Log"), 48, H - 26, "500 12px " + F_MONO, "#5c5c61");
+    txt(c, new Date().toLocaleDateString(LANG === "en" ? "en-GB" : "cs-CZ"), W - 48, H - 26, "500 12px " + F_MONO, "#5c5c61", "right");
+  }
+  function drawHero(c, x, y, w, kdv, wr){
+    txt(c, "K/D", x, y + 16, "500 15px " + F_MONO, "#8b8b90");
+    c.save(); c.shadowColor = "rgba(255,176,32,0.55)"; c.shadowBlur = 30;
+    txt(c, kdv.toFixed(2), x - 4, y + 130, "700 118px " + F_MONO, "#ffb020");
+    c.restore();
+    var cx = x + w - 62, cy = y + 80, r = 50;
+    c.lineWidth = 12; c.lineCap = "round"; c.strokeStyle = "rgba(255,255,255,0.09)";
+    c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.stroke();
+    if (wr !== null){
+      c.strokeStyle = "#3ddc97";
+      c.beginPath(); c.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * wr / 100); c.stroke();
+    }
+    txt(c, wr === null ? "—" : wr + "%", cx, cy + 9, "700 26px " + F_MONO, "#f2f1ee", "center");
+    txt(c, T("Winrate").toUpperCase(), cx, cy + r + 30, "500 12px " + F_MONO, "#8b8b90", "center");
+  }
+  function drawTiles(c, x, y, w, items){
+    var gap = 12, tw = (w - (items.length - 1) * gap) / items.length, th = 88;
+    items.forEach(function(it, i){
+      var x0 = x + i * (tw + gap);
+      box(c, x0, y, tw, th);
+      txt(c, String(it.label).toUpperCase(), x0 + 16, y + 28, "500 11px " + F_MONO, "#8b8b90");
+      c.font = "700 " + (it.size || 32) + "px " + F_MONO;
+      txt(c, ell(c, it.value, tw - 28), x0 + 16, y + 67, "700 " + (it.size || 32) + "px " + F_MONO, it.color || "#f2f1ee");
+    });
+  }
+  function drawInfo(c, x, y, w, h, items){
+    var gap = 12, iw = (w - (items.length - 1) * gap) / items.length;
+    items.forEach(function(it, i){
+      var x0 = x + i * (iw + gap);
+      box(c, x0, y, iw, h);
+      txt(c, String(it.label).toUpperCase(), x0 + 18, y + 32, "500 11px " + F_MONO, "#8b8b90");
+      c.font = "700 24px " + F_DISP;
+      txt(c, ell(c, it.value, iw - 36), x0 + 18, y + h / 2 + 12, "700 24px " + F_DISP, "#f2f1ee");
+      c.font = "500 12px " + F_MONO;
+      txt(c, ell(c, it.sub || "", iw - 36), x0 + 18, y + h - 22, "500 12px " + F_MONO, "#8b8b90");
+    });
+  }
+  function drawList(c, x, y, w, h, title, rows){
+    box(c, x, y, w, h);
+    txt(c, title.toUpperCase(), x + 22, y + 34, "500 12px " + F_MONO, "#8b8b90");
+    if (!rows.length){ txt(c, T("Zatím žádná data."), x + 22, y + 82, "500 15px " + F_MONO, "#5c5c61"); return; }
+    var top = y + 52, rh = Math.min(66, (h - 62) / rows.length);
+    var max = Math.max.apply(null, rows.map(function(r){ return r.value; })) || 1;
+    rows.forEach(function(r, i){
+      var ry = top + i * rh;
+      txt(c, ("0" + (i + 1)).slice(-2), x + 22, ry + rh * .42, "700 14px " + F_MONO, i === 0 ? "#ffb020" : "#5c5c61");
+      c.font = "700 19px " + F_DISP;
+      var nm = ell(c, r.name, w * .42);
+      txt(c, nm, x + 60, ry + rh * .42, "700 19px " + F_DISP, "#f2f1ee");
+      if (r.cls){
+        var nw = c.measureText(nm).width, col = CLASS_COL[r.cls] || "#ffcf4d";
+        c.font = "700 10px " + F_MONO;
+        var lw = c.measureText(r.cls.toUpperCase()).width + 14;
+        rr(c, x + 60 + nw + 10, ry + rh * .42 - 15, lw, 20, 6); c.fillStyle = col + "26"; c.fill();
+        txt(c, r.cls.toUpperCase(), x + 60 + nw + 17, ry + rh * .42 - 1, "700 10px " + F_MONO, col);
+      }
+      var bx = x + 60, bw = w - 60 - 196, by = ry + rh * .42 + 12;
+      rr(c, bx, by, bw, 7, 3.5); c.fillStyle = "rgba(255,255,255,0.07)"; c.fill();
+      var gb = c.createLinearGradient(bx, 0, bx + bw, 0); gb.addColorStop(0, "#ff5b1e"); gb.addColorStop(1, "#ffb020");
+      rr(c, bx, by, Math.max(7, bw * r.value / max), 7, 3.5); c.fillStyle = gb; c.fill();
+      txt(c, String(r.value), x + w - 22, ry + rh * .42, "700 22px " + F_MONO, "#f2f1ee", "right");
+      txt(c, r.sub, x + w - 22, ry + rh * .42 + 19, "500 11px " + F_MONO, "#8b8b90", "right");
+    });
+  }
+  function drawSpark(c, x, y, w, h, title, series, results){
+    box(c, x, y, w, h);
+    txt(c, title.toUpperCase(), x + 22, y + 34, "500 12px " + F_MONO, "#8b8b90");
+    if (series.length < 2){ txt(c, T("Zatím žádná data."), x + 22, y + 84, "500 15px " + F_MONO, "#5c5c61"); return; }
+    series = series.slice(-60); results = results.slice(-60);
+    var px = x + 24, py = y + 50, pw = w - 48, ph = h - 50 - 24;
+    var max = Math.max(1, Math.max.apply(null, series));
+    var avg = series.reduce(function(s, v){ return s + v; }, 0) / series.length;
+    var X = function(i){ return px + pw * i / (series.length - 1); };
+    var Y = function(v){ return py + ph - ph * v / max; };
+    c.setLineDash([5, 5]); c.strokeStyle = "rgba(255,255,255,0.14)"; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(px, Y(avg)); c.lineTo(px + pw, Y(avg)); c.stroke(); c.setLineDash([]);
+    txt(c, "Ø " + avg.toFixed(2), x + w - 24, y + 34, "600 13px " + F_MONO, "#ffb020", "right");
+    var fill = c.createLinearGradient(0, py, 0, py + ph);
+    fill.addColorStop(0, "rgba(255,91,30,0.35)"); fill.addColorStop(1, "rgba(255,91,30,0)");
+    c.beginPath(); c.moveTo(X(0), py + ph);
+    series.forEach(function(v, i){ c.lineTo(X(i), Y(v)); });
+    c.lineTo(X(series.length - 1), py + ph); c.closePath(); c.fillStyle = fill; c.fill();
+    var lg = c.createLinearGradient(px, 0, px + pw, 0); lg.addColorStop(0, "#ff5b1e"); lg.addColorStop(1, "#ffb020");
+    c.beginPath(); series.forEach(function(v, i){ if (i) c.lineTo(X(i), Y(v)); else c.moveTo(X(i), Y(v)); });
+    c.strokeStyle = lg; c.lineWidth = 3; c.lineJoin = "round"; c.lineCap = "round"; c.stroke();
+    series.forEach(function(v, i){
+      c.beginPath(); c.arc(X(i), Y(v), series.length > 35 ? 2.4 : 3.6, 0, Math.PI * 2);
+      c.fillStyle = results[i] === "win" ? "#3ddc97" : (results[i] === "loss" ? "#ff5b7a" : "#ffb020"); c.fill();
+    });
+  }
+  function shareStats(list){
+    var o = { n: list.length, kills: 0, deaths: 0, assists: 0, wins: 0, losses: 0, w: {}, m: {}, best: null };
+    var sorted = list.slice().sort(function(a, b){ return a.ts - b.ts; });
+    sorted.forEach(function(e){
+      o.kills += e.kills; o.deaths += e.deaths; o.assists += e.assists;
+      if (e.result === "win") o.wins++; else if (e.result === "loss") o.losses++;
+      var w = o.w[e.weapon] || (o.w[e.weapon] = { name: e.weapon, cls: e["class"], matches: 0, kills: 0, deaths: 0 });
+      w.matches++; w.kills += e.kills; w.deaths += e.deaths;
+      if (e.map){ var m = o.m[e.map] || (o.m[e.map] = { name: e.map, matches: 0, kills: 0, deaths: 0 }); m.matches++; m.kills += e.kills; m.deaths += e.deaths; }
+      if (!o.best || e.kills > o.best.kills) o.best = e;
+    });
+    o.kd = kd(o.kills, o.deaths);
+    var decided = o.wins + o.losses;
+    o.wr = decided ? Math.round(o.wins / decided * 100) : null;
+    var byKills = function(a, b){ return b.kills - a.kills || b.matches - a.matches; };
+    o.weapons = Object.keys(o.w).map(function(k){ return o.w[k]; }).sort(byKills);
+    o.maps = Object.keys(o.m).map(function(k){ return o.m[k]; }).sort(byKills);
+    o.series = sorted.map(function(e){ return kd(e.kills, e.deaths); });
+    o.results = sorted.map(function(e){ return e.result; });
+    return o;
+  }
+  function rowSub(o){ return "K/D " + kd(o.kills, o.deaths).toFixed(2) + " · " + T(o.matches + " zápasů"); }
+
+  function shareList(){ return share.scope === "all" ? entries : viewEntries(); }
+  function shareLabel(){
+    return (share.scope === "all" || seasonData.view === "all") ? T("Všechny sezóny") : T("Sezóna") + " " + seasonData.view;
+  }
+  function drawShare(){
+    var cv = document.getElementById("shareCanvas");
+    var sq = share.format === "square", W = sq ? 1080 : 1200, H = sq ? 1080 : 630, S = 1.5;
+    cv.width = W * S; cv.height = H * S;
+    var c = cv.getContext("2d");
+    c.setTransform(S, 0, 0, S, 0, 0);
+    drawBg(c, W, H);
+    var list = shareList();
+    var weaponMode = share.template === "weapon";
+    drawHeader(c, W, (weaponMode ? T("Zbraň") : T("Moje statistiky")).toUpperCase() + " · " + shareLabel().toUpperCase(), share.name.trim());
+    drawFooter(c, W, H);
+    if (!list.length){
+      txt(c, T("Zatím nemáš žádná data, ze kterých by šla vytvořit karta."), 48, 200, "500 18px " + F_MONO, "#8b8b90");
+      return;
+    }
+    var st = shareStats(list);
+    var lx = 48, lw = sq ? W - 96 : 540, rx = sq ? 48 : 624, rw = sq ? W - 96 : 528;
+
+    if (!weaponMode){
+      var topN = sq ? 4 : 3;
+      var wrows = st.weapons.slice(0, topN).map(function(w){ return { name: w.name, cls: w.cls, value: w.kills, sub: rowSub(w) }; });
+      var favMap = st.maps.slice().sort(function(a, b){ return b.matches - a.matches; })[0];
+      var ach = computeAchievementStats(), unlocked = ACHIEVEMENTS.filter(function(a){ return a.value(ach) >= a.target; }).length;
+      var info = [
+        { label: T("Nejlepší zápas"), value: st.best ? T(st.best.kills + " killů") : "—", sub: st.best ? st.best.weapon + (st.best.map ? " · " + st.best.map : "") : "" },
+        { label: T("Nejhranější mapa"), value: favMap ? favMap.name : "—", sub: favMap ? T(favMap.matches + " zápasů") : "" },
+        { label: T("Odznaky"), value: unlocked + " / " + ACHIEVEMENTS.length, sub: T("splněno") }
+      ];
+      var tiles = [
+        { label: T("Zápasy"), value: st.n }, { label: T("Killy"), value: st.kills },
+        { label: T("Asisty"), value: st.assists }, { label: T("Smrti"), value: st.deaths }
+      ];
+      if (sq){
+        drawHero(c, lx, 128, lw, st.kd, st.wr);
+        drawTiles(c, lx, 312, lw, tiles);
+        drawList(c, rx, 416, rw, 250, T("Nejlepší zbraně"), wrows);
+        drawSpark(c, rx, 682, rw, 190, T("Vývoj K/D"), st.series, st.results);
+        drawInfo(c, lx, 888, lw, 130, info);
+      } else {
+        drawHero(c, lx, 128, lw, st.kd, st.wr);
+        drawTiles(c, lx, 312, lw, tiles);
+        drawInfo(c, lx, 416, lw, 156, info);
+        drawList(c, rx, 124, rw, 250, T("Nejlepší zbraně"), wrows);
+        drawSpark(c, rx, 390, rw, 182, T("Vývoj K/D"), st.series, st.results);
+      }
+      return;
+    }
+
+    // single-weapon card
+    var ws = shareList().filter(function(e){ return e.weapon === share.weapon; });
+    if (!ws.length) ws = shareList().filter(function(e){ return e.weapon === st.weapons[0].name; });
+    var wst = shareStats(ws), wn = ws[0].weapon, wcls = ws[0]["class"], col = CLASS_COL[wcls] || "#ffcf4d";
+    c.font = "700 56px " + F_DISP;
+    txt(c, ell(c, wn, lw - 150), lx, 156, "700 56px " + F_DISP, "#f2f1ee");
+    var nmW = c.measureText(ell(c, wn, lw - 150)).width;
+    c.font = "700 12px " + F_MONO;
+    var clw = c.measureText(wcls.toUpperCase()).width + 18;
+    rr(c, lx + nmW + 16, 120, clw, 26, 8); c.fillStyle = col + "26"; c.fill();
+    txt(c, wcls.toUpperCase(), lx + nmW + 25, 138, "700 12px " + F_MONO, col);
+    var avgK = wst.n ? (wst.kills / wst.n).toFixed(1) : "0";
+    var t1 = [
+      { label: T("Zápasy"), value: wst.n }, { label: T("Killy"), value: wst.kills },
+      { label: T("Ø killů / zápas"), value: avgK, size: 30 }, { label: T("Nejlepší zápas"), value: wst.best ? wst.best.kills : "—" }
+    ];
+    var t2 = [{ label: T("Asisty"), value: wst.assists }, { label: T("Smrti"), value: wst.deaths }, { label: T("Winrate"), value: wst.wr === null ? "—" : wst.wr + "%", color: "#3ddc97" }];
+    var mrows = wst.maps.slice(0, 4).map(function(m){ return { name: m.name, value: m.kills, sub: rowSub(m) }; });
+    if (sq){
+      drawHero(c, lx, 188, lw, wst.kd, wst.wr);
+      drawTiles(c, lx, 364, lw, t1);
+      drawTiles(c, lx, 464, lw, t2);
+      drawList(c, rx, 568, rw, 250, T("Mapy"), mrows);
+      drawSpark(c, rx, 834, rw, 186, T("Vývoj K/D"), wst.series, wst.results);
+    } else {
+      drawHero(c, lx, 176, lw, wst.kd, wst.wr);
+      drawTiles(c, lx, 372, lw, t1);
+      drawTiles(c, lx, 472, lw, t2);
+      drawList(c, rx, 124, rw, 250, T("Mapy"), mrows);
+      drawSpark(c, rx, 390, rw, 182, T("Vývoj K/D"), wst.series, wst.results);
+    }
+  }
+  function renderShare(){
+    drawShare();
+    ensureFonts().then(function(){ if (shareOverlay.classList.contains("show")) drawShare(); });
+  }
+  function saveShare(){ try { localStorage.setItem(SHARE_KEY, JSON.stringify(share)); } catch(e){} }
+  function shMsg(text, kind){
+    var m = document.getElementById("shMsg");
+    m.textContent = text || "";
+    m.className = "auth-msg" + (kind ? " " + kind : "");
+  }
+  function fillShareControls(){
+    document.getElementById("shTemplate").value = share.template;
+    document.getElementById("shFormat").value = share.format;
+    document.getElementById("shScope").value = share.scope;
+    document.getElementById("shName").value = share.name;
+    var agg = {};
+    shareList().forEach(function(e){ agg[e.weapon] = (agg[e.weapon] || 0) + 1; });
+    var names = Object.keys(agg).sort(function(a, b){ return agg[b] - agg[a]; });
+    var sel = document.getElementById("shWeapon");
+    sel.innerHTML = names.map(function(n){ return '<option value="' + esc(n) + '">' + esc(n) + ' (' + agg[n] + ')</option>'; }).join("");
+    if (names.indexOf(share.weapon) === -1) share.weapon = names[0] || "";
+    sel.value = share.weapon;
+    document.getElementById("shWeaponField").style.display = share.template === "weapon" ? "" : "none";
+    document.getElementById("shShare").style.display = (navigator.share && navigator.canShare) ? "" : "none";
+  }
+  function openShare(){
+    fillShareControls(); shMsg("");
+    shareOverlay.classList.add("show");
+    renderShare();
+  }
+  function closeShare(){ shareOverlay.classList.remove("show"); }
+  function shareBlob(cb){
+    document.getElementById("shareCanvas").toBlob(function(b){ cb(b); }, "image/png");
+  }
+  ["shTemplate", "shFormat", "shScope", "shWeapon"].forEach(function(id){
+    document.getElementById(id).addEventListener("change", function(){
+      share.template = document.getElementById("shTemplate").value;
+      share.format = document.getElementById("shFormat").value;
+      share.scope = document.getElementById("shScope").value;
+      share.weapon = document.getElementById("shWeapon").value;
+      saveShare();
+      fillShareControls();
+      renderShare();
+    });
+  });
+  document.getElementById("shName").addEventListener("input", function(){
+    share.name = this.value; saveShare(); drawShare();
+  });
+  document.getElementById("shDownload").addEventListener("click", function(){
+    shareBlob(function(b){
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = "finals-log-stats-" + new Date().toISOString().slice(0, 10) + ".png";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+      shMsg(T("Obrázek stažen"), "ok");
+    });
+  });
+  document.getElementById("shCopy").addEventListener("click", function(){
+    if (!navigator.clipboard || !window.ClipboardItem){ shMsg(T("Kopírování tady nejde — použij Stáhnout PNG."), "err"); return; }
+    shareBlob(function(b){
+      navigator.clipboard.write([new ClipboardItem({ "image/png": b })]).then(
+        function(){ shMsg(T("Obrázek zkopírován"), "ok"); },
+        function(){ shMsg(T("Kopírování tady nejde — použij Stáhnout PNG."), "err"); }
+      );
+    });
+  });
+  document.getElementById("shShare").addEventListener("click", function(){
+    shareBlob(function(b){
+      var file = new File([b], "finals-log-stats.png", { type: "image/png" });
+      if (!navigator.canShare({ files: [file] })){ shMsg(T("Sdílení se nepovedlo."), "err"); return; }
+      navigator.share({ files: [file], title: "Finals Log" }).catch(function(err){
+        if (err && err.name !== "AbortError") shMsg(T("Sdílení se nepovedlo."), "err");
+      });
+    });
+  });
+  document.getElementById("shClose").addEventListener("click", closeShare);
+  shareOverlay.addEventListener("click", function(ev){ if (ev.target === shareOverlay) closeShare(); });
+  document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeShare(); });
+  document.getElementById("shareBtn").addEventListener("click", openShare);
+  document.getElementById("shareBtn2").addEventListener("click", openShare);
 
   // ---------- extra filters, pagination, mobile add button ----------
   (function(){
@@ -2774,7 +3714,7 @@
         var res = mergeData(JSON.parse(reader.result));
         showToast("Import hotov: " + res.added + " nových záznamů" + (res.skipped ? " · " + res.skipped + " přeskočeno" : ""));
       } catch(err){
-        alert("Tenhle soubor se nepodařilo načíst. Vyber zálohu vyexportovanou z Finals Log.");
+        alertT("Tenhle soubor se nepodařilo načíst. Vyber zálohu vyexportovanou z Finals Log.");
       }
       input.value = "";
     };
@@ -2787,7 +3727,7 @@
   });
   document.addEventListener("keydown", function(ev){
     var tag = (ev.target && ev.target.tagName) || "";
-    if (authOverlay.classList.contains("show")) return;
+    if (authOverlay.classList.contains("show") || helpOverlay.classList.contains("show") || shareOverlay.classList.contains("show")) return;
     if (overlay.classList.contains("show")){
       if (ev.key === "Enter" && (ev.ctrlKey || ev.metaKey || tag === "INPUT")){
         ev.preventDefault();
@@ -2796,6 +3736,11 @@
       return;
     }
     if (tourActive) return;
+    if (tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA" && !ev.ctrlKey && !ev.metaKey && !ev.altKey){
+      if (ev.key === "/"){ ev.preventDefault(); document.getElementById("searchInput").focus(); return; }
+      if (ev.key === "?"){ ev.preventDefault(); openHelp(); return; }
+      if (ev.key === "t" || ev.key === "T"){ ev.preventDefault(); setTheme(getTheme() === "light" ? "dark" : "light"); return; }
+    }
     if ((ev.key === "n" || ev.key === "N") && !ev.ctrlKey && !ev.metaKey && !ev.altKey &&
         tag !== "INPUT" && tag !== "SELECT" && tag !== "TEXTAREA"){
       ev.preventDefault();
@@ -2803,6 +3748,19 @@
     }
   });
 
+  loadUi();
+  var resizeTimer = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){ if (statsTab === "trend") renderTrendChart(); else if (statsTab === "activity") renderHeatmap(); }, 180);
+  });
+  document.querySelectorAll(".wrap > header, .wrap > .login-bar, .wrap > section, .wrap > .grid > section, .wrap > .footer-actions, .wrap > footer").forEach(function(el, i){
+    el.style.setProperty("--i", i);
+    el.classList.add("reveal");
+  });
+  document.documentElement.lang = LANG;
+  document.getElementById("langBtn").textContent = LANG === "en" ? "EN" : "CZ";
+  if (LANG === "en") trTree(document.body);
   renderAll();
   cloudStart();
 })();
