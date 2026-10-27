@@ -296,7 +296,9 @@
 
   /* ---------- table ---------- */
   .table-wrap{overflow-x:auto;padding:6px 8px 16px;}
-  table{width:100%;border-collapse:collapse;min-width:1130px;}
+  table{width:100%;border-collapse:collapse;}
+  table.table-compact{min-width:780px;}
+  table.table-full{min-width:1130px;}
   thead th{
     text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
     text-transform:uppercase;color:var(--text-dim);font-weight:500;
@@ -449,7 +451,11 @@
     .highlight-row{grid-template-columns:repeat(2,1fr);}
   }
   @media (max-width:520px){
-    .highlight-row{grid-template-columns:1fr;}
+    .highlight-row{gap:10px;padding:14px 14px 4px;}
+    .highlight-card{padding:11px 12px;}
+    .highlight-card .hc-value{font-size:14px;}
+    .highlight-card .hc-label{font-size:9px;}
+    .highlight-card .hc-sub{font-size:10px;}
   }
 
   .field-hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dim);margin-top:7px;}
@@ -601,6 +607,72 @@
   .share-actions .btn{flex:1 1 auto;justify-content:center;}
   .share-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;}
   @media (max-width:560px){ .share-controls{grid-template-columns:1fr;} }
+  /* ---------- tidy-up: menus, filters, compact table, compact badges ---------- */
+  .menu-wrap{position:relative;display:inline-flex;}
+  .menu{
+    position:absolute;right:0;top:calc(100% + 8px);z-index:70;min-width:250px;
+    background:var(--bg-2);border:1px solid var(--panel-border-hover);border-radius:14px;padding:6px;
+    box-shadow:0 22px 50px -16px rgba(0,0,0,.7);animation:riseIn .18s ease;
+  }
+  .menu[hidden]{display:none !important;}
+  .menu-item{
+    display:flex;align-items:center;gap:12px;width:100%;padding:9px 10px;border:none;background:none;
+    color:var(--text);border-radius:10px;font-size:13px;text-align:left;transition:background .15s ease;
+  }
+  .menu-item:hover{background:var(--panel-2);}
+  .menu-item.active{color:var(--accent-2);}
+  .mi-icon{
+    width:26px;height:26px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+    background:var(--panel);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text-dim);
+  }
+  .menu-sep{height:1px;background:var(--panel-border);margin:6px 4px;}
+  .more-chip{white-space:nowrap;}
+  #statsMoreMenu{min-width:190px;}
+  #statsMoreMenu .menu-item{padding:9px 12px;}
+  .filters-btn{display:inline-flex;align-items:center;gap:6px;}
+  .fbadge{background:var(--accent);color:#fff;border-radius:999px;font-size:10px;padding:1px 6px;font-weight:700;}
+  .fbadge:empty{display:none;}
+  .filters-panel{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px 22px;
+    margin:14px 20px 4px;padding:16px 18px;border-radius:14px;
+    background:var(--panel);border:1px solid var(--panel-border);animation:riseIn .2s ease;
+  }
+  .filters-panel[hidden]{display:none;}
+  .fgroup{display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .fgroup .filter-select{width:100%;border-radius:10px;}
+  .flabel{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);}
+  #clearFiltersBtn{justify-self:start;align-self:end;}
+  table.table-compact .col-x, table.table-compact th.col-x{display:none;}
+  table.table-full .inline{display:none;}
+  i.cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:9px;flex-shrink:0;}
+  i.cdot.Light{background:var(--light-c);} i.cdot.Medium{background:var(--medium-c);} i.cdot.Heavy{background:var(--heavy-c);}
+  .inline-pills{display:inline-flex;gap:5px;margin-left:6px;vertical-align:middle;flex-wrap:wrap;}
+  .note-ind{color:var(--text-dimmer);font-size:11px;margin-left:4px;cursor:help;}
+  .static .trend-line,.static .trend-ma{animation:none;stroke-dashoffset:0;}
+  .static .trend-area,.static .trend-dot{animation:none;opacity:1;}
+  .badges-grid{gap:10px;padding:14px 20px 20px;}
+  .badge-card{display:grid;grid-template-columns:34px 1fr;column-gap:11px;row-gap:5px;align-items:center;padding:12px 13px;}
+  .badge-icon{grid-column:1;grid-row:1 / span 3;margin:0;width:34px;height:34px;}
+  .badge-title{grid-column:2;margin:0;font-size:12.5px;line-height:1.2;}
+  .badge-desc{display:none;}
+  .badge-progress-track{grid-column:2;}
+  .badge-progress-label{grid-column:2;margin:0;}
+  @media (max-width:700px){ .filters-panel{margin:12px 12px 2px;} }
+  #statsFilterBadge{cursor:pointer;}
+  #statsFilterBadge:hover{color:var(--text);}
+  .mode-row{
+    display:grid;grid-template-columns:minmax(120px,1.1fr) 150px minmax(120px,auto);gap:18px;align-items:center;
+    padding:12px 10px;border-radius:12px;cursor:pointer;transition:background .2s ease;
+  }
+  .mode-row:hover{background:var(--panel-2);}
+  .mode-spark{display:flex;align-items:center;justify-content:center;min-height:38px;}
+  .mode-spark svg{display:block;overflow:visible;}
+  .spark-empty{color:var(--text-dimmer);font-family:var(--mono);}
+  .mode-hint{font-family:var(--mono);font-size:10.5px;color:var(--text-dimmer);text-align:center;padding:12px 0 2px;}
+  @media (max-width:560px){
+    .mode-row{grid-template-columns:1fr auto;gap:10px 14px;}
+    .mode-spark{grid-column:1 / -1;grid-row:2;justify-content:flex-start;}
+  }
   .badges-grid{--cols:6;display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
   .badges-grid .badge-card{flex:0 0 calc((100% - (var(--cols) - 1) * 12px) / var(--cols));min-width:0;}
   @media (max-width:1100px){ .badges-grid{--cols:4;} }
@@ -671,7 +743,7 @@
   /* ---------- mobile card layout for the match log table ---------- */
   @media (max-width:640px){
     .table-wrap{padding:6px 6px 14px;overflow-x:visible;}
-    table{min-width:0;}
+    table, table.table-compact, table.table-full{min-width:0;}
     thead{display:none;}
     tbody, tr, td{display:block;width:100%;}
     tbody tr{
@@ -692,6 +764,20 @@
     }
     tbody td.actions-cell::before{content:"";}
     tbody td.actions-cell{justify-content:flex-end;}
+    tbody tr{display:grid;grid-template-columns:repeat(4,1fr);gap:0 10px;padding:8px 14px;}
+    tbody td{grid-column:span 2;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:3px;padding:8px 0;border-top:none;text-align:left;}
+    tbody td:nth-child(1){grid-column:1 / -1;flex-direction:row;align-items:center;gap:0;font-size:15px;font-weight:600;padding-top:6px;}
+    tbody td:nth-child(1)::before{display:none;}
+    tbody td:nth-child(n+9):nth-child(-n+12){grid-column:span 1;}
+    tbody td.actions-cell{grid-column:1 / -1;flex-direction:row;justify-content:flex-end;border-top:1px solid rgba(255,255,255,0.06);padding:6px 0 2px;}
+    tbody td{order:6;}
+    tbody td:nth-child(1){order:-1;}
+    tbody td:nth-child(3){order:1;}
+    tbody td:nth-child(5){order:2;}
+    tbody td:nth-child(6){order:3;}
+    tbody td:nth-child(13){order:4;}
+    tbody td:nth-child(n+9):nth-child(-n+12){order:5;}
+    tbody td.actions-cell{order:9;}
   }
 </style>
 </head>
@@ -708,10 +794,22 @@
     </div>
     <div class="header-actions">
       <select class="filter-select" id="seasonSelect" title="Sezóna"></select>
-      <button class="icon-btn lang-btn" id="langBtn" title="Jazyk / Language">CZ</button>
-      <button class="icon-btn" id="tutorialBtn" title="Spustit tutoriál" style="font-family:var(--disp);font-weight:700;font-size:16px;">?</button>
       <button class="icon-btn" id="accountBtn" title="Přihlásit se"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.2" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.4 14c.4-2.7 2.7-4.4 5.6-4.4s5.2 1.7 5.6 4.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="sync-dot" id="syncDot"></span></button>
-      <button class="icon-btn" id="themeToggle" title="Přepnout světlý/tmavý režim"></button>
+      <div class="menu-wrap">
+        <button class="icon-btn" id="menuBtn" title="Nastavení a nástroje" aria-haspopup="true" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="3.2" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="12.8" cy="8" r="1.5"/></svg></button>
+        <div class="menu" id="mainMenu" hidden>
+          <button type="button" class="menu-item" id="langBtn"><span class="mi-icon" id="langCode" translate="no">CZ</span><span translate="no">Jazyk / Language</span></button>
+          <button type="button" class="menu-item" id="themeToggle"><span class="mi-icon" id="themeIcon"></span><span>Přepnout světlý / tmavý režim</span></button>
+          <button type="button" class="menu-item" id="tutorialBtn"><span class="mi-icon">?</span><span>Spustit tutoriál</span></button>
+          <button type="button" class="menu-item" id="helpBtn"><span class="mi-icon">/</span><span>Klávesové zkratky</span></button>
+          <div class="menu-sep"></div>
+          <button type="button" class="menu-item" id="shareBtn"><span class="mi-icon">↗</span><span>Sdílet statistiky</span></button>
+          <button type="button" class="menu-item" id="exportBtn"><span class="mi-icon">↓</span><span>Export zálohy</span></button>
+          <button type="button" class="menu-item" id="importBtn"><span class="mi-icon">↑</span><span>Import zálohy</span></button>
+          <button type="button" class="menu-item" id="csvBtn"><span class="mi-icon">⊞</span><span>Export CSV</span></button>
+          <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
+        </div>
+      </div>
       <button class="btn btn-primary" id="openAdd">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
         Nový záznam
@@ -741,11 +839,16 @@
       <div class="chips" id="statsTabChips">
         <button class="chip active" data-tab="trend">Trend K/D</button>
         <button class="chip" data-tab="maps">Podle mapy</button>
-        <button class="chip" data-tab="classes">Podle třídy</button>
         <button class="chip" data-tab="modes">Podle módu</button>
-        <button class="chip" data-tab="sides">Útok / obrana</button>
         <button class="chip" data-tab="activity">Aktivita</button>
-        <button class="chip" data-tab="compare">Porovnání zbraní</button>
+        <span class="menu-wrap">
+          <button type="button" class="chip more-chip" id="statsMoreBtn" aria-haspopup="true">Více ▾</button>
+          <div class="menu" id="statsMoreMenu" hidden>
+            <button type="button" class="menu-item" data-tab="classes">Podle třídy</button>
+            <button type="button" class="menu-item" data-tab="sides">Útok / obrana</button>
+            <button type="button" class="menu-item" data-tab="compare">Porovnání zbraní</button>
+          </div>
+        </span>
       </div>
     </div>
 
@@ -786,6 +889,7 @@
         </div>
       </div>
       <div class="leaderboard-list" id="leaderboard"></div>
+      <div id="lbMoreWrap" style="display:none;text-align:center;padding:0 0 18px;"><button type="button" class="btn btn-ghost" id="lbMoreBtn"></button></div>
     </section>
 
     <section class="panel">
@@ -793,24 +897,35 @@
         <h2 id="logHeading">Historie zápasů <span class="count" id="logCount">0</span></h2>
         <div class="head-filters">
           <input type="text" class="search-input" id="searchInput" placeholder="Hledat…  ( / )" autocomplete="off" aria-label="Hledat v historii">
+          <button type="button" class="chip filters-btn" id="filtersBtn" aria-expanded="false">Filtry <span class="fbadge" id="filtersCount"></span></button>
+          <button type="button" class="chip" id="colsBtn">Všechny sloupce</button>
+        </div>
+      </div>
+      <div class="filters-panel" id="filtersPanel" hidden>
+        <div class="fgroup"><span class="flabel">Třída</span>
           <div class="chips" id="classChips">
             <button class="chip active" data-class="All">Vše</button>
             <button class="chip" data-class="Light">Light</button>
             <button class="chip" data-class="Medium">Medium</button>
             <button class="chip" data-class="Heavy">Heavy</button>
           </div>
+        </div>
+        <div class="fgroup"><span class="flabel">Výsledek</span>
           <div class="chips" id="resultFilterChips">
             <button class="chip active" data-result="">Vše</button>
             <button class="chip" data-result="win">Výhry</button>
             <button class="chip" data-result="loss">Prohry</button>
           </div>
-          <select class="filter-select" id="mapFilter"></select>
-          <select class="filter-select" id="modeFilter"></select>
+        </div>
+        <div class="fgroup"><span class="flabel">Zbraň</span><select class="filter-select" id="weaponFilter"><option value="">Všechny zbraně</option></select></div>
+        <div class="fgroup"><span class="flabel">Mapa</span><select class="filter-select" id="mapFilter"></select></div>
+        <div class="fgroup"><span class="flabel">Mód</span><select class="filter-select" id="modeFilter"></select></div>
+        <div class="fgroup"><span class="flabel">Období</span>
           <select class="filter-select" id="rangeFilter">
             <option value="">Celé období</option><option value="today">Dnes</option><option value="7">Posledních 7 dní</option><option value="30">Posledních 30 dní</option>
           </select>
-          <select class="filter-select" id="weaponFilter"><option value="">Všechny zbraně</option></select>
         </div>
+        <button type="button" class="auth-link" id="clearFiltersBtn" style="display:none;">Zrušit filtry</button>
       </div>
 
       <div class="detail-strip" id="detailStrip">
@@ -832,20 +947,20 @@
           <thead>
             <tr>
               <th data-key="weapon">Zbraň <span class="arrow">▾</span></th>
-              <th data-key="class">Třída <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="class">Třída <span class="arrow">▾</span></th>
               <th data-key="mode">Mód <span class="arrow">▾</span></th>
-              <th data-key="side">Strana <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="side">Strana <span class="arrow">▾</span></th>
               <th data-key="map">Mapa <span class="arrow">▾</span></th>
               <th data-key="result">Výsledek <span class="arrow">▾</span></th>
-              <th data-key="fullStack">Stack <span class="arrow">▾</span></th>
-              <th data-key="round">Kolo <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="fullStack">Stack <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="round">Kolo <span class="arrow">▾</span></th>
               <th data-key="kills">K <span class="arrow">▾</span></th>
               <th data-key="assists">A <span class="arrow">▾</span></th>
               <th data-key="deaths">D <span class="arrow">▾</span></th>
               <th data-key="kd">K/D <span class="arrow">▾</span></th>
               <th data-key="ts">Datum <span class="arrow">▾</span></th>
-              <th data-key="season">Sezóna <span class="arrow">▾</span></th>
-              <th data-key="note">Poznámka <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="season">Sezóna <span class="arrow">▾</span></th>
+              <th class="col-x" data-key="note">Poznámka <span class="arrow">▾</span></th>
               <th></th>
             </tr>
           </thead>
@@ -870,14 +985,6 @@
     <div class="badges-grid" id="badgesGrid"></div>
   </section>
 
-  <div class="footer-actions">
-    <button type="button" class="btn btn-ghost" id="shareBtn">Sdílet statistiky</button>
-    <button type="button" class="btn btn-ghost" id="exportBtn">Export zálohy</button>
-    <button type="button" class="btn btn-ghost" id="importBtn">Import zálohy</button>
-    <button type="button" class="btn btn-ghost" id="csvBtn">Export CSV</button>
-    <button type="button" class="btn btn-ghost" id="helpBtn">Zkratky ( ? )</button>
-    <input type="file" id="importFile" accept="application/json,.json" style="display:none;">
-  </div>
   <footer id="footerText">FINALS LOG · data se ukládají jen v tomto prohlížeči</footer>
 </div>
 
@@ -1059,7 +1166,7 @@
     }
   } catch(e){}
   // The interface text is written in Czech; this glossary turns it into English at display time.
-  var GLOSS = {"Aktivita": "Activity", "Asisty": "Assists", "Celé období": "All time", "Další": "Next", "Datum": "Date", "Dnes": "Today", "Export zálohy": "Export backup", "Herní mód": "Game mode", "Historie zápasů": "Match history", "Hledat v historii": "Search history", "Hledat…  ( / )": "Search…  ( / )", "Hráno ve full stacku?": "Played as a full stack?", "Import zálohy": "Import backup", "K/D poměr": "K/D ratio", "Killy": "Kills", "Klávesové zkratky": "Keyboard shortcuts", "Kolo (volitelné)": "Round (optional)", "Kolo": "Round", "Mapa": "Map", "Mód": "Mode", "Nejsi přihlášený — data jsou jen v tomhle prohlížeči.": "You're not signed in — your data is only in this browser.", "Nový záznam · stejné nastavení": "New entry · same settings", "Nový záznam": "New entry", "Obránci": "Defenders", "Odznaky": "Badges", "Podle mapy": "By map", "Podle módu": "By mode", "Podle třídy": "By class", "Porovnání zbraní": "Weapon comparison", "Posledních 30 dní": "Last 30 days", "Posledních 7 dní": "Last 7 days", "Poznámka (volitelné)": "Note (optional)", "Poznámka": "Note", "Prohra": "Loss", "Prohry": "Losses", "Přepnout světlý / tmavý režim": "Toggle light / dark mode", "Přepnout světlý/tmavý režim": "Toggle light / dark mode", "Přeskočit tutoriál": "Skip tutorial", "Přihlásit se znovu": "Sign in again", "Přihlásit se": "Sign in", "Rozumím": "Got it", "Sezóna": "Season", "Skrýt": "Hide", "Smrti": "Deaths", "Spustit tutoriál": "Start tutorial", "Statistika": "Statistics", "Strana (Point Break)": "Side (Point Break)", "Strana": "Side", "Tahle nápověda": "This help", "Třída": "Class", "Uložit záznam (ve formuláři)": "Save entry (in the form)", "Uložit záznam": "Save entry", "Uložit změny": "Save changes", "Upravit záznam": "Edit entry", "Výhra": "Win", "Výhry": "Wins", "Výsledek zápasu": "Match result", "Výsledek": "Result", "Vše": "All", "Všechny zbraně": "All weapons", "Zatím žádné zápasy. Přidej první záznam tlačítkem výše.": "No matches yet. Add your first entry with the button above.", "Zavřít okno": "Close window", "Zavřít": "Close", "Zbraň": "Weapon", "Zkratky ( ? )": "Shortcuts ( ? )", "Zpět na přihlášení": "Back to sign in", "Zpět": "Back", "Zrušit filtr": "Clear filter", "Zrušit": "Cancel", "Zápasy": "Matches", "např. ranked push, hraju s kámošema…": "e.g. ranked push, playing with friends…", "Útok / obrana": "Attack / defense", "Útočníci": "Attackers", "Žebříček zbraní": "Weapon ranking", "Útok": "Attack", "Obrana": "Defense", "Dokončit": "Finish", "splněno": "unlocked", "Jiný mód": "Other mode", "Jiná / neznámá": "Other / unknown", "(aktuální)": "(current)", "+ Nová sezóna…": "+ New season…", "Všechny sezóny": "All seasons", "Všechny mapy": "All maps", "Všechny módy": "All modes", "+ Přidat vlastní zbraň…": "+ Add custom weapon…", "+ Přidat vlastní mapu…": "+ Add custom map…", "Nejlepší zápas": "Best match", "Aktuální série": "Current streak", "Nejhranější mapa": "Most played map", "neznámá mapa": "unknown map", "od posledního zápasu": "since the last match", "zatím bez výsledků": "no results yet", "zatím nic": "nothing yet", "zahraj první kolo": "play your first round", "žádná data o mapách": "no map data", "bez výsledků": "no results", "Zatím žádná data pro statistiku.": "No data for statistics yet.", "Zatím žádná data pro graf.": "No data for the chart yet.", "Zatím žádná data o zbraních.": "No weapon data yet.", "Zatím žádná data pro": "No data yet for", "Zatím žádná data.": "No data yet.", "Zatím žádná aktivita.": "No activity yet.", "· barva bodu = výhra / prohra / nerozhodnuto": "· dot color = win / loss / undecided", "Klouzavý průměr (10)": "Moving average (10)", "průměr": "avg", "zápasů s": "matches with", "odehraných zápasů": "matches played", "všech": "all", "výhra": "win", "prohra": "loss", "výher": "wins", "killy": "kills", "zápasy": "matches", "zápasů": "matches", "záznamů": "entries", "záznamy": "entries", "záznam": "entry", "dní": "days", "dny": "days", "killů": "kills", "asistů": "assists", "aktivních dní": "active days", "nejdelší série": "longest streak", "Méně": "Less", "Více": "More", "bez aktivity": "no activity", "Na porovnání potřebuješ záznamy aspoň se dvěma zbraněmi.": "You need entries with at least two weapons to compare.", "Ø killů / zápas": "Ø kills / match", "Winrate": "Win rate", "Nový záznam se stejným nastavením": "New entry with the same settings", "Smazat záznam": "Delete entry", "Vrátit zpět": "Undo", "Záznam smazán": "Entry deleted", "z 3 · zápas pokračuje": "of 3 · match continues", "Tvoje K/D s touhle zbraní:": "Your K/D with this weapon:", "S touhle zbraní zatím nemáš žádný záznam.": "You have no entries with this weapon yet.", "Název zbraně:": "Weapon name:", "Třída? Napiš Light, Medium nebo Heavy:": "Class? Type Light, Medium or Heavy:", "Třída musí být Light, Medium nebo Heavy.": "Class must be Light, Medium or Heavy.", "Název mapy:": "Map name:", "Začít Sezónu": "Start Season", "Nové záznamy se budou ukládat do ní a statistiky začnou od nuly (starší sezóny zůstanou).": "New entries will be saved to it and the stats will start from zero (older seasons stay).", "Záloha stažena": "Backup downloaded", "Import hotov:": "Import done:", "nových záznamů": "new entries", "přeskočeno": "skipped", "Tenhle soubor se nepodařilo načíst. Vyber zálohu vyexportovanou z Finals Log.": "This file couldn't be read. Choose a backup exported from Finals Log.", "CSV stažené": "CSV downloaded", "Přihlášení proběhlo — jsi přihlášený.": "Signed in — you're logged in.", "Přihlášení": "Sign in", "Data se uloží do cloudu a uvidíš je na všech zařízeních": "Your data is saved to the cloud and visible on all your devices", "Heslo": "Password", "Vytvořit účet": "Create account", "Zapomenuté heslo": "Forgot password", "Nový účet": "New account", "Heslo aspoň 6 znaků": "Password of at least 6 characters", "Už mám účet": "I already have an account", "Pošleme ti odkaz na nastavení nového hesla": "We'll send you a link to set a new password", "Poslat odkaz": "Send link", "Nové heslo": "New password", "Zvol si nové heslo k účtu": "Choose a new password for your account", "Uložit heslo": "Save password", "Účet": "Account", "Synchronizovat teď": "Sync now", "Nahrát data z tohoto prohlížeče": "Upload data from this browser", "Odhlásit se": "Sign out", "Synchronizuju…": "Syncing…", "Hotovo.": "Done.", "Špatný e-mail nebo heslo.": "Wrong email or password.", "E-mail ještě není potvrzený — klikni na odkaz v e-mailu, který jsme ti poslali.": "Email not confirmed yet — click the link in the email we sent you.", "Tenhle e-mail je už zaregistrovaný. Zkus se přihlásit.": "This email is already registered. Try signing in.", "Heslo musí mít aspoň 6 znaků.": "Password must be at least 6 characters.", "Moc pokusů za krátkou dobu. Zkus to za chvíli.": "Too many attempts in a short time. Try again in a moment.", "Zadej platný e-mail.": "Enter a valid email.", "Něco se pokazilo (chyba": "Something went wrong (error", "Nejde se připojit k serveru. Zkontroluj internet.": "Can't reach the server. Check your internet connection.", "Vyplň e-mail a heslo.": "Enter your email and password.", "Vyplň e-mail.": "Enter your email.", "Chvilku strpení…": "Just a moment…", "Přihlášeno, načítám data…": "Signed in, loading your data…", "Účet vytvořen, načítám…": "Account created, loading…", "Poslali jsme ti potvrzovací e-mail. Klikni na odkaz v něm a pak se přihlas.": "We sent you a confirmation email. Click the link in it and then sign in.", "Pokud účet existuje, poslali jsme na e-mail odkaz na obnovení hesla.": "If the account exists, we've emailed you a password reset link.", "Heslo změněno": "Password changed", "Nahrání se nepodařilo.": "Upload failed.", "Nahráno do účtu:": "Uploaded to your account:", "už existovalo": "already existed", "V tomhle prohlížeči je": "This browser has", "uloženo bez účtu. Nahrát je do tvého účtu?": "saved without an account. Upload them to your account?", "Některé změny se ještě neuložily do cloudu a při odhlášení se ztratí. Odhlásit i tak?": "Some changes haven't been saved to the cloud yet and will be lost when you sign out. Sign out anyway?", "Vše uloženo v cloudu": "All saved to the cloud", "Ukládám…": "Saving…", "Offline — změny se uloží, až budeš online": "Offline — changes will be saved when you're back online", "Uložení se nepovedlo, zkusím to znovu": "Saving failed, I'll try again", "Přihlášení vypršelo — přihlas se znovu": "Session expired — sign in again", "přihlášen jako": "signed in as", "data v cloudu": "data in the cloud", "data se ukládají jen v tomto prohlížeči": "data is stored only in this browser", "V cloudu chybí sloupec": "The cloud is missing the column", "— spusť SQL z chatu, jinak se tahle hodnota neuloží.": "— run the SQL from the chat, otherwise this value won't be saved.", "Nový odznak:": "New badge:", "První krev": "First blood", "Setník": "Centurion", "Veterán": "Veteran", "Týmový hráč": "Team player", "Bez ztráty kytičky": "Flawless", "Horká série": "Hot streak", "Nezastavitelný": "Unstoppable", "Věrnost jedné zbrani": "One-weapon loyalty", "Cestovatel": "Explorer", "Plný stack": "Full stack", "Všestranný": "All-rounder", "Ostrostřelec": "Sharpshooter", "Maratonec": "Marathoner", "Ulož svůj první záznam do trackeru.": "Save your first entry to the tracker.", "Nasbírej 100 killů celkem.": "Collect 100 kills in total.", "Zaznamenej 100 zápasů nebo kol.": "Record 100 matches or rounds.", "Nasbírej 50 asistů celkem.": "Collect 50 assists in total.", "Zápas s aspoň 1 killem a 0 smrtí.": "A match with at least 1 kill and 0 deaths.", "Vyhraj 5 zápasů v řadě.": "Win 5 matches in a row.", "Vyhraj 10 zápasů v řadě.": "Win 10 matches in a row.", "20 zápasů se stejnou zbraní.": "20 matches with the same weapon.", "Zahraj si na všech": "Play on all", "mapách.": "maps.", "10 zápasů ve full stacku.": "10 matches as a full stack.", "Zahraj 5 různých herních módů.": "Play 5 different game modes.", "K/D 3.0+ v jednom zápase (min. 5 killů).": "K/D 3.0+ in a single match (min. 5 kills).", "Zaznamenej všechna 3 kola jednoho Cashout zápasu.": "Record all 3 rounds of one Cashout match.", "Přidat zápas": "Add a match", "Sezóny": "Seasons", "Účet a cloud": "Account & cloud", "Světlý / tmavý režim": "Light / dark mode", "Celkový přehled": "Overview", "Rychlé přehledy": "Quick overview", "Filtr podle třídy": "Filter by class", "Filtr podle zbraně": "Filter by weapon", "Filtr podle módu": "Filter by mode", "Hledání a období": "Search & period", "Úprava a mazání": "Editing & deleting", "Záloha dat": "Data backup", "Jazyk": "Language", "Tady zadáš nový zápas nebo jedno kolo Cashoutu — zbraň, killy, asisty, smrti, mapu, výsledek i to, jestli jsi hrál ve full stacku. Zkratka: klávesa N. Ve formuláři uložíš přes Enter.": "Enter a new match or a single Cashout round here — weapon, kills, assists, deaths, map, result, and whether you played as a full stack. Shortcut: the N key. In the form, press Enter to save.", "Přepínej mezi sezónami nebo všemi dohromady. Když vyjde nová sezóna, zvol „+ Nová sezóna…“ — nové záznamy půjdou do ní a statistiky začnou od nuly. Odznaky se počítají za všechny sezóny dohromady.": "Switch between seasons or view them all together. When a new season comes out, choose “+ New season…” — new entries go into it and the stats start from zero. Badges are counted across all seasons together.", "Po přihlášení se tvoje data ukládají do cloudu a uvidíš je na mobilu i na PC. Tečka na ikoně ukazuje stav: zelená = uloženo, oranžová = ukládám, červená = chyba.": "After signing in, your data is saved to the cloud and you'll see it on your phone and PC. The dot on the icon shows the status: green = saved, orange = saving, red = error.", "Přepneš appku mezi tmavým a světlým vzhledem, podle toho, co ti víc sedí.": "Switch the app between a dark and a light look, whichever suits you better.", "Součet za vybranou sezónu — počet zápasů, killy, asisty, smrti, poměr výher a celkové K/D.": "Totals for the selected season — number of matches, kills, assists, deaths, win rate and overall K/D.", "Přepínáním záložek uvidíš trend K/D v čase, výkon podle mapy nebo podle třídy zbraně (Light / Medium / Heavy).": "Switch tabs to see the K/D trend over time, performance by map or by weapon class (Light / Medium / Heavy).", "Tvůj nejlepší zápas, aktuální série výher/proher a nejhranější mapa na jeden pohled.": "Your best match, current win/loss streak and most played map at a glance.", "Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf.": "Weapons ranked by kills, K/D or number of matches. Click a weapon in the list to filter the history and the chart.", "Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi.": "Shows only matches with Light, Medium or Heavy weapons.", "Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy.": "Pick a specific weapon and the table below shows only its matches.", "Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“.": "Switch between Cashout, Point Break, Power Shift and other modes. You can also find stats by mode in the “By mode” tab.", "Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Vedle je filtr podle období. Tvoje filtry a řazení si appka pamatuje.": "Search by weapon, map, mode or note (key /). Next to it is a period filter. The app remembers your filters and sorting.", "Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších.": "The complete list of matches and rounds. On a computer, click a column header to sort by kills, K/D, date and more.", "Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť.": "The two squares create a new entry with the same settings, the pencil edits an entry and the bin deletes it (for a moment you can click “Undo”). Works for each row separately.", "Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh.": "Complete in-game challenges — like 5 wins in a row, 100 kills, or play every map. Completed ones light up, for the others you see your progress.", "Data žijí jen v tomhle prohlížeči. Export stáhne zálohu do souboru, Import ji načte zpět (třeba v jiném prohlížeči) a jen doplní chybějící záznamy.": "Your data lives only in this browser. Export downloads a backup file, Import loads it back (e.g. in another browser) and only adds missing entries.", "Přepni appku mezi češtinou a angličtinou.": "Switch the app between Czech and English.", "Sdílet statistiky": "Share stats", "Sdílet…": "Share…", "Sdílet": "Share", "Šablona": "Template", "Přehled": "Overview", "Formát": "Format", "Široký (1200×630)": "Wide (1200×630)", "Čtverec (1080×1080)": "Square (1080×1080)", "Období": "Period", "Aktuální pohled": "Current view", "Jméno na kartě": "Name on the card", "Stáhnout PNG": "Download PNG", "Kopírovat obrázek": "Copy image", "Obrázek zkopírován": "Image copied", "Kopírování tady nejde — použij Stáhnout PNG.": "Copying isn't available here — use Download PNG.", "Obrázek stažen": "Image downloaded", "Sdílení se nepovedlo.": "Sharing didn't work.", "Zatím nemáš žádná data, ze kterých by šla vytvořit karta.": "You don't have any data to make a card from yet.", "Moje statistiky": "My stats", "Nejlepší zbraně": "Top weapons", "Vývoj K/D": "K/D trend", "Vytvořeno ve Finals Log": "Made with Finals Log", "Mapy": "Maps", "Sdílení": "Sharing", "Vytvoř hezkou kartu se svými statistikami jako obrázek — stáhni ji, zkopíruj nebo ji pošli rovnou na Discord.": "Create a nice card with your stats as an image — download it, copy it or send it straight to Discord.", "např. tvoje přezdívka": "e.g. your nickname"};
+  var GLOSS = {"Aktivita": "Activity", "Asisty": "Assists", "Celé období": "All time", "Další": "Next", "Datum": "Date", "Dnes": "Today", "Export zálohy": "Export backup", "Herní mód": "Game mode", "Historie zápasů": "Match history", "Hledat v historii": "Search history", "Hledat…  ( / )": "Search…  ( / )", "Hráno ve full stacku?": "Played as a full stack?", "Import zálohy": "Import backup", "K/D poměr": "K/D ratio", "Killy": "Kills", "Klávesové zkratky": "Keyboard shortcuts", "Kolo (volitelné)": "Round (optional)", "Kolo": "Round", "Mapa": "Map", "Mód": "Mode", "Nejsi přihlášený — data jsou jen v tomhle prohlížeči.": "You're not signed in — your data is only in this browser.", "Nový záznam · stejné nastavení": "New entry · same settings", "Nový záznam": "New entry", "Obránci": "Defenders", "Odznaky": "Badges", "Podle mapy": "By map", "Podle módu": "By mode", "Podle třídy": "By class", "Porovnání zbraní": "Weapon comparison", "Posledních 30 dní": "Last 30 days", "Posledních 7 dní": "Last 7 days", "Poznámka (volitelné)": "Note (optional)", "Poznámka": "Note", "Prohra": "Loss", "Prohry": "Losses", "Přepnout světlý / tmavý režim": "Toggle light / dark mode", "Přepnout světlý/tmavý režim": "Toggle light / dark mode", "Přeskočit tutoriál": "Skip tutorial", "Přihlásit se znovu": "Sign in again", "Přihlásit se": "Sign in", "Rozumím": "Got it", "Sezóna": "Season", "Skrýt": "Hide", "Smrti": "Deaths", "Spustit tutoriál": "Start tutorial", "Statistika": "Statistics", "Strana (Point Break)": "Side (Point Break)", "Strana": "Side", "Tahle nápověda": "This help", "Třída": "Class", "Uložit záznam (ve formuláři)": "Save entry (in the form)", "Uložit záznam": "Save entry", "Uložit změny": "Save changes", "Upravit záznam": "Edit entry", "Výhra": "Win", "Výhry": "Wins", "Výsledek zápasu": "Match result", "Výsledek": "Result", "Vše": "All", "Všechny zbraně": "All weapons", "Zatím žádné zápasy. Přidej první záznam tlačítkem výše.": "No matches yet. Add your first entry with the button above.", "Zavřít okno": "Close window", "Zavřít": "Close", "Zbraň": "Weapon", "Zkratky ( ? )": "Shortcuts ( ? )", "Zpět na přihlášení": "Back to sign in", "Zpět": "Back", "Zrušit filtr": "Clear filter", "Zrušit": "Cancel", "Zápasy": "Matches", "např. ranked push, hraju s kámošema…": "e.g. ranked push, playing with friends…", "Útok / obrana": "Attack / defense", "Útočníci": "Attackers", "Žebříček zbraní": "Weapon ranking", "Útok": "Attack", "Obrana": "Defense", "Dokončit": "Finish", "splněno": "unlocked", "Jiný mód": "Other mode", "Jiná / neznámá": "Other / unknown", "(aktuální)": "(current)", "+ Nová sezóna…": "+ New season…", "Všechny sezóny": "All seasons", "Všechny mapy": "All maps", "Všechny módy": "All modes", "+ Přidat vlastní zbraň…": "+ Add custom weapon…", "+ Přidat vlastní mapu…": "+ Add custom map…", "Nejlepší zápas": "Best match", "Aktuální série": "Current streak", "Nejhranější mapa": "Most played map", "neznámá mapa": "unknown map", "od posledního zápasu": "since the last match", "zatím bez výsledků": "no results yet", "zatím nic": "nothing yet", "zahraj první kolo": "play your first round", "žádná data o mapách": "no map data", "bez výsledků": "no results", "Zatím žádná data pro statistiku.": "No data for statistics yet.", "Zatím žádná data pro graf.": "No data for the chart yet.", "Zatím žádná data o zbraních.": "No weapon data yet.", "Zatím žádná data pro": "No data yet for", "Zatím žádná data.": "No data yet.", "Zatím žádná aktivita.": "No activity yet.", "· barva bodu = výhra / prohra / nerozhodnuto": "· dot color = win / loss / undecided", "Klouzavý průměr (10)": "Moving average (10)", "průměr": "avg", "zápasů s": "matches with", "odehraných zápasů": "matches played", "všech": "all", "výhra": "win", "prohra": "loss", "výher": "wins", "killy": "kills", "zápasy": "matches", "zápasů": "matches", "záznamů": "entries", "záznamy": "entries", "záznam": "entry", "dní": "days", "dny": "days", "killů": "kills", "asistů": "assists", "aktivních dní": "active days", "nejdelší série": "longest streak", "Méně": "Less", "Více": "More", "bez aktivity": "no activity", "Na porovnání potřebuješ záznamy aspoň se dvěma zbraněmi.": "You need entries with at least two weapons to compare.", "Ø killů / zápas": "Ø kills / match", "Winrate": "Win rate", "Nový záznam se stejným nastavením": "New entry with the same settings", "Smazat záznam": "Delete entry", "Vrátit zpět": "Undo", "Záznam smazán": "Entry deleted", "z 3 · zápas pokračuje": "of 3 · match continues", "Tvoje K/D s touhle zbraní:": "Your K/D with this weapon:", "S touhle zbraní zatím nemáš žádný záznam.": "You have no entries with this weapon yet.", "Název zbraně:": "Weapon name:", "Třída? Napiš Light, Medium nebo Heavy:": "Class? Type Light, Medium or Heavy:", "Třída musí být Light, Medium nebo Heavy.": "Class must be Light, Medium or Heavy.", "Název mapy:": "Map name:", "Začít Sezónu": "Start Season", "Nové záznamy se budou ukládat do ní a statistiky začnou od nuly (starší sezóny zůstanou).": "New entries will be saved to it and the stats will start from zero (older seasons stay).", "Záloha stažena": "Backup downloaded", "Import hotov:": "Import done:", "nových záznamů": "new entries", "přeskočeno": "skipped", "Tenhle soubor se nepodařilo načíst. Vyber zálohu vyexportovanou z Finals Log.": "This file couldn't be read. Choose a backup exported from Finals Log.", "CSV stažené": "CSV downloaded", "Přihlášení proběhlo — jsi přihlášený.": "Signed in — you're logged in.", "Přihlášení": "Sign in", "Data se uloží do cloudu a uvidíš je na všech zařízeních": "Your data is saved to the cloud and visible on all your devices", "Heslo": "Password", "Vytvořit účet": "Create account", "Zapomenuté heslo": "Forgot password", "Nový účet": "New account", "Heslo aspoň 6 znaků": "Password of at least 6 characters", "Už mám účet": "I already have an account", "Pošleme ti odkaz na nastavení nového hesla": "We'll send you a link to set a new password", "Poslat odkaz": "Send link", "Nové heslo": "New password", "Zvol si nové heslo k účtu": "Choose a new password for your account", "Uložit heslo": "Save password", "Účet": "Account", "Synchronizovat teď": "Sync now", "Nahrát data z tohoto prohlížeče": "Upload data from this browser", "Odhlásit se": "Sign out", "Synchronizuju…": "Syncing…", "Hotovo.": "Done.", "Špatný e-mail nebo heslo.": "Wrong email or password.", "E-mail ještě není potvrzený — klikni na odkaz v e-mailu, který jsme ti poslali.": "Email not confirmed yet — click the link in the email we sent you.", "Tenhle e-mail je už zaregistrovaný. Zkus se přihlásit.": "This email is already registered. Try signing in.", "Heslo musí mít aspoň 6 znaků.": "Password must be at least 6 characters.", "Moc pokusů za krátkou dobu. Zkus to za chvíli.": "Too many attempts in a short time. Try again in a moment.", "Zadej platný e-mail.": "Enter a valid email.", "Něco se pokazilo (chyba": "Something went wrong (error", "Nejde se připojit k serveru. Zkontroluj internet.": "Can't reach the server. Check your internet connection.", "Vyplň e-mail a heslo.": "Enter your email and password.", "Vyplň e-mail.": "Enter your email.", "Chvilku strpení…": "Just a moment…", "Přihlášeno, načítám data…": "Signed in, loading your data…", "Účet vytvořen, načítám…": "Account created, loading…", "Poslali jsme ti potvrzovací e-mail. Klikni na odkaz v něm a pak se přihlas.": "We sent you a confirmation email. Click the link in it and then sign in.", "Pokud účet existuje, poslali jsme na e-mail odkaz na obnovení hesla.": "If the account exists, we've emailed you a password reset link.", "Heslo změněno": "Password changed", "Nahrání se nepodařilo.": "Upload failed.", "Nahráno do účtu:": "Uploaded to your account:", "už existovalo": "already existed", "V tomhle prohlížeči je": "This browser has", "uloženo bez účtu. Nahrát je do tvého účtu?": "saved without an account. Upload them to your account?", "Některé změny se ještě neuložily do cloudu a při odhlášení se ztratí. Odhlásit i tak?": "Some changes haven't been saved to the cloud yet and will be lost when you sign out. Sign out anyway?", "Vše uloženo v cloudu": "All saved to the cloud", "Ukládám…": "Saving…", "Offline — změny se uloží, až budeš online": "Offline — changes will be saved when you're back online", "Uložení se nepovedlo, zkusím to znovu": "Saving failed, I'll try again", "Přihlášení vypršelo — přihlas se znovu": "Session expired — sign in again", "přihlášen jako": "signed in as", "data v cloudu": "data in the cloud", "data se ukládají jen v tomto prohlížeči": "data is stored only in this browser", "V cloudu chybí sloupec": "The cloud is missing the column", "— spusť SQL z chatu, jinak se tahle hodnota neuloží.": "— run the SQL from the chat, otherwise this value won't be saved.", "Nový odznak:": "New badge:", "První krev": "First blood", "Setník": "Centurion", "Veterán": "Veteran", "Týmový hráč": "Team player", "Bez ztráty kytičky": "Flawless", "Horká série": "Hot streak", "Nezastavitelný": "Unstoppable", "Věrnost jedné zbrani": "One-weapon loyalty", "Cestovatel": "Explorer", "Plný stack": "Full stack", "Všestranný": "All-rounder", "Ostrostřelec": "Sharpshooter", "Maratonec": "Marathoner", "Ulož svůj první záznam do trackeru.": "Save your first entry to the tracker.", "Nasbírej 100 killů celkem.": "Collect 100 kills in total.", "Zaznamenej 100 zápasů nebo kol.": "Record 100 matches or rounds.", "Nasbírej 50 asistů celkem.": "Collect 50 assists in total.", "Zápas s aspoň 1 killem a 0 smrtí.": "A match with at least 1 kill and 0 deaths.", "Vyhraj 5 zápasů v řadě.": "Win 5 matches in a row.", "Vyhraj 10 zápasů v řadě.": "Win 10 matches in a row.", "20 zápasů se stejnou zbraní.": "20 matches with the same weapon.", "Zahraj si na všech": "Play on all", "mapách.": "maps.", "10 zápasů ve full stacku.": "10 matches as a full stack.", "Zahraj 5 různých herních módů.": "Play 5 different game modes.", "K/D 3.0+ v jednom zápase (min. 5 killů).": "K/D 3.0+ in a single match (min. 5 kills).", "Zaznamenej všechna 3 kola jednoho Cashout zápasu.": "Record all 3 rounds of one Cashout match.", "Přidat zápas": "Add a match", "Sezóny": "Seasons", "Účet a cloud": "Account & cloud", "Světlý / tmavý režim": "Light / dark mode", "Celkový přehled": "Overview", "Rychlé přehledy": "Quick overview", "Filtr podle třídy": "Filter by class", "Filtr podle zbraně": "Filter by weapon", "Filtr podle módu": "Filter by mode", "Hledání a období": "Search & period", "Úprava a mazání": "Editing & deleting", "Záloha dat": "Data backup", "Jazyk": "Language", "Tady zadáš nový zápas nebo jedno kolo Cashoutu — zbraň, killy, asisty, smrti, mapu, výsledek i to, jestli jsi hrál ve full stacku. Zkratka: klávesa N. Ve formuláři uložíš přes Enter.": "Enter a new match or a single Cashout round here — weapon, kills, assists, deaths, map, result, and whether you played as a full stack. Shortcut: the N key. In the form, press Enter to save.", "Přepínej mezi sezónami nebo všemi dohromady. Když vyjde nová sezóna, zvol „+ Nová sezóna…“ — nové záznamy půjdou do ní a statistiky začnou od nuly. Odznaky se počítají za všechny sezóny dohromady.": "Switch between seasons or view them all together. When a new season comes out, choose “+ New season…” — new entries go into it and the stats start from zero. Badges are counted across all seasons together.", "Po přihlášení se tvoje data ukládají do cloudu a uvidíš je na mobilu i na PC. Tečka na ikoně ukazuje stav: zelená = uloženo, oranžová = ukládám, červená = chyba.": "After signing in, your data is saved to the cloud and you'll see it on your phone and PC. The dot on the icon shows the status: green = saved, orange = saving, red = error.", "Přepneš appku mezi tmavým a světlým vzhledem, podle toho, co ti víc sedí.": "Switch the app between a dark and a light look, whichever suits you better.", "Součet za vybranou sezónu — počet zápasů, killy, asisty, smrti, poměr výher a celkové K/D.": "Totals for the selected season — number of matches, kills, assists, deaths, win rate and overall K/D.", "Přepínáním záložek uvidíš trend K/D v čase, výkon podle mapy nebo podle třídy zbraně (Light / Medium / Heavy).": "Switch tabs to see the K/D trend over time, performance by map or by weapon class (Light / Medium / Heavy).", "Tvůj nejlepší zápas, aktuální série výher/proher a nejhranější mapa na jeden pohled.": "Your best match, current win/loss streak and most played map at a glance.", "Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf.": "Weapons ranked by kills, K/D or number of matches. Click a weapon in the list to filter the history and the chart.", "Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi.": "Shows only matches with Light, Medium or Heavy weapons.", "Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy.": "Pick a specific weapon and the table below shows only its matches.", "Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“.": "Switch between Cashout, Point Break, Power Shift and other modes. You can also find stats by mode in the “By mode” tab.", "Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Vedle je filtr podle období. Tvoje filtry a řazení si appka pamatuje.": "Search by weapon, map, mode or note (key /). Next to it is a period filter. The app remembers your filters and sorting.", "Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších.": "The complete list of matches and rounds. On a computer, click a column header to sort by kills, K/D, date and more.", "Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť.": "The two squares create a new entry with the same settings, the pencil edits an entry and the bin deletes it (for a moment you can click “Undo”). Works for each row separately.", "Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh.": "Complete in-game challenges — like 5 wins in a row, 100 kills, or play every map. Completed ones light up, for the others you see your progress.", "Data žijí jen v tomhle prohlížeči. Export stáhne zálohu do souboru, Import ji načte zpět (třeba v jiném prohlížeči) a jen doplní chybějící záznamy.": "Your data lives only in this browser. Export downloads a backup file, Import loads it back (e.g. in another browser) and only adds missing entries.", "Přepni appku mezi češtinou a angličtinou.": "Switch the app between Czech and English.", "Sdílet statistiky": "Share stats", "Sdílet…": "Share…", "Sdílet": "Share", "Šablona": "Template", "Přehled": "Overview", "Formát": "Format", "Široký (1200×630)": "Wide (1200×630)", "Čtverec (1080×1080)": "Square (1080×1080)", "Období": "Period", "Aktuální pohled": "Current view", "Jméno na kartě": "Name on the card", "Stáhnout PNG": "Download PNG", "Kopírovat obrázek": "Copy image", "Obrázek zkopírován": "Image copied", "Kopírování tady nejde — použij Stáhnout PNG.": "Copying isn't available here — use Download PNG.", "Obrázek stažen": "Image downloaded", "Sdílení se nepovedlo.": "Sharing didn't work.", "Zatím nemáš žádná data, ze kterých by šla vytvořit karta.": "You don't have any data to make a card from yet.", "Moje statistiky": "My stats", "Nejlepší zbraně": "Top weapons", "Vývoj K/D": "K/D trend", "Vytvořeno ve Finals Log": "Made with Finals Log", "Mapy": "Maps", "Sdílení": "Sharing", "Vytvoř hezkou kartu se svými statistikami jako obrázek — stáhni ji, zkopíruj nebo ji pošli rovnou na Discord.": "Create a nice card with your stats as an image — download it, copy it or send it straight to Discord.", "např. tvoje přezdívka": "e.g. your nickname", "Nastavení a nástroje": "Settings & tools", "Tady najdeš přepínač jazyka (CZ / EN), světlý a tmavý režim, tutoriál, klávesové zkratky a zálohování dat (export, import, CSV).": "Here you'll find the language switch (CZ / EN), light and dark mode, the tutorial, keyboard shortcuts and data backup (export, import, CSV).", "Filtry": "Filters", "Tady zúžíš historii podle třídy zbraně, výsledku, mapy, módu, období nebo konkrétní zbraně. Číslo u tlačítka ukazuje, kolik filtrů je zapnutých.": "Narrow the history down by weapon class, result, map, mode, period or a specific weapon. The number on the button shows how many filters are active.", "Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Tvoje filtry a řazení si appka pamatuje.": "Search by weapon, map, mode or note (key /). The app remembers your filters and sorting.", "Všechny sloupce": "All columns", "Zrušit filtry": "Clear filters", "Zobrazit všechny": "Show all", "Zobrazit méně": "Show less", "Zobrazit podrobný graf tohoto módu": "Show the detailed chart for this mode", "Klikni na mód a uvidíš jeho podrobný graf K/D.": "Click a mode to see its detailed K/D chart.", "v módu": "in mode"};
   function reEsc(k){ return k.replace(/[.*+?^${}()|[\]\\\/]/g, "\\$&"); }
   function mkRe(keys){
     keys.sort(function(a, b){ return b.length - a.length; });
@@ -1161,7 +1268,7 @@
     document.documentElement.lang = l;
     if (l === "en") trTree(document.body); else restoreAll();
     langObserver.takeRecords();
-    document.getElementById("langBtn").textContent = l === "en" ? "EN" : "CZ";
+    document.getElementById("langCode").textContent = l === "en" ? "EN" : "CZ";
     renderAll();
     renderAuthUI();
     if (document.getElementById("shareOverlay").classList.contains("show")) drawShare();
@@ -1242,8 +1349,8 @@
   var MOON_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.8 9.8A6 6 0 1 1 6.2 2.2a6.6 6.6 0 1 0 7.6 7.6z" fill="currentColor"/></svg>';
   function applyTheme(mode){
     document.documentElement.classList.toggle("light", mode === "light");
-    var btn = document.getElementById("themeToggle");
-    if (btn) btn.innerHTML = mode === "light" ? MOON_ICON : SUN_ICON;
+    var ic = document.getElementById("themeIcon");
+    if (ic) ic.innerHTML = mode === "light" ? MOON_ICON : SUN_ICON;
   }
   function getTheme(){
     try {
@@ -1279,6 +1386,8 @@
     modeFilter: "",
     search: "",
     range: "",
+    fullCols: false,
+    lbAll: false,
     shown: 25,
     lastSig: ""
   };
@@ -1540,7 +1649,7 @@
       var unlocked = val >= a.target;
       if (unlocked){ unlockedCount++; unlockedIds.push(a.id); }
       var pct = Math.min(100, (val / a.target) * 100);
-      return '<div class="badge-card ' + (unlocked ? "unlocked" : "locked") + '">' +
+      return '<div class="badge-card ' + (unlocked ? "unlocked" : "locked") + '" title="' + esc(a.desc) + '">' +
         '<div class="badge-icon">' + BADGE_ICON_SVG + '</div>' +
         '<div class="badge-title">' + a.title + '</div>' +
         '<div class="badge-desc">' + a.desc + '</div>' +
@@ -1612,15 +1721,16 @@
   // ---------- K/D trend chart ----------
   var trendAvg = false;
   try { trendAvg = localStorage.getItem("finals-log-trendavg") === "1"; } catch(e){}
-  function renderTrendChart(){
+  function renderTrendChart(noAnim){
     var wrap = document.getElementById("trendChartWrap");
-    var source = state.weaponFilter
-      ? viewEntries().filter(function(e){ return e.weapon === state.weaponFilter; })
-      : viewEntries();
+    var source = viewEntries().filter(function(e){
+      return (!state.weaponFilter || e.weapon === state.weaponFilter) && (!state.modeFilter || modeOf(e) === state.modeFilter);
+    });
+    var filterLabel = [state.weaponFilter, state.modeFilter].filter(Boolean).join(" · ");
     var pts = source.slice().sort(function(a,b){ return a.ts - b.ts; });
     if (!pts.length){
       wrap.innerHTML = '<div class="empty"><div class="big-icon">[ ∅ ]</div>'+
-        (state.weaponFilter ? 'Zatím žádná data pro '+esc(state.weaponFilter)+'.' : 'Zatím žádná data pro graf.')+
+        (filterLabel ? 'Zatím žádná data pro '+esc(filterLabel)+'.' : 'Zatím žádná data pro graf.')+
         '</div>';
       return;
     }
@@ -1660,7 +1770,8 @@
       '</svg>' +
       '<div class="chart-tip"></div>' +
       '<div class="trend-foot"><span>' +
-        (state.weaponFilter ? pts.length + ' zápasů s ' + esc(state.weaponFilter) : 'všech ' + pts.length + ' zápasů') +
+        (state.weaponFilter ? pts.length + ' zápasů s ' + esc(state.weaponFilter) + (state.modeFilter ? ' · ' + esc(state.modeFilter) : '')
+          : (state.modeFilter ? pts.length + ' zápasů v módu ' + esc(state.modeFilter) : 'všech ' + pts.length + ' zápasů')) +
         ' · barva bodu = výhra / prohra / nerozhodnuto</span>' +
         '<button type="button" class="chip' + (trendAvg ? ' active' : '') + '" id="trendAvgBtn">Klouzavý průměr (10)</button></div>';
 
@@ -1672,6 +1783,7 @@
 
     var svg = wrap.querySelector("svg"), tip = wrap.querySelector(".chart-tip");
     var hl = wrap.querySelector(".trend-hl"), guide = wrap.querySelector(".trend-guide");
+    if (noAnim) svg.classList.add("static");
     function hide(){ tip.style.opacity = 0; hl.style.opacity = 0; guide.style.opacity = 0; }
     svg.addEventListener("pointermove", function(ev){
       var r = svg.getBoundingClientRect();
@@ -1813,7 +1925,7 @@
     try {
       localStorage.setItem(UI_KEY, JSON.stringify({
         classFilter: state.classFilter, resultFilter: state.resultFilter, mapFilter: state.mapFilter, modeFilter: state.modeFilter,
-        range: state.range, search: state.search, lbSort: state.lbSort, tableSort: state.tableSort, statsTab: statsTab
+        range: state.range, search: state.search, lbSort: state.lbSort, tableSort: state.tableSort, statsTab: statsTab, fullCols: state.fullCols
       }));
     } catch(e){}
   }
@@ -1837,11 +1949,13 @@
     mark("#classChips .chip", "class", state.classFilter);
     mark("#resultFilterChips .chip", "result", state.resultFilter);
     mark("#lbSortChips .chip", "sort", state.lbSort);
-    mark("#statsTabChips .chip", "tab", statsTab);
+    mark("#statsTabChips [data-tab]", "tab", statsTab);
     document.getElementById("mapFilter").value = state.mapFilter;
     document.getElementById("modeFilter").value = state.modeFilter;
     document.getElementById("rangeFilter").value = state.range;
     document.getElementById("searchInput").value = state.search;
+    state.fullCols = !!u.fullCols;
+    document.getElementById("colsBtn").classList.toggle("active", state.fullCols);
   }
 
   // ---------- CSV export ----------
@@ -1885,10 +1999,68 @@
   helpOverlay.addEventListener("click", function(ev){ if (ev.target === helpOverlay) closeHelp(); });
   document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeHelp(); });
 
+  // ---------- one small K/D chart per game mode ----------
+  function miniSpark(series, w, h){
+    series = series.slice(-30);
+    if (series.length < 2) return '<span class="spark-empty">—</span>';
+    var max = Math.max(1, Math.max.apply(null, series)), pad = 4;
+    var X = function(i){ return pad + (w - 2 * pad) * i / (series.length - 1); };
+    var Y = function(v){ return h - pad - (h - 2 * pad) * v / max; };
+    var pts = series.map(function(v, i){ return X(i).toFixed(1) + "," + Y(v).toFixed(1); }).join(" ");
+    var area = X(0).toFixed(1) + "," + (h - pad) + " " + pts + " " + X(series.length - 1).toFixed(1) + "," + (h - pad);
+    var last = series[series.length - 1];
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" aria-hidden="true">' +
+      '<polygon points="' + area + '" style="fill:rgba(255,91,30,.16)"/>' +
+      '<polyline class="trend-line" pathLength="1" points="' + pts + '" fill="none" style="stroke:var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<circle cx="' + X(series.length - 1).toFixed(1) + '" cy="' + Y(last).toFixed(1) + '" r="3" style="fill:var(--accent-2)"/></svg>';
+  }
+  function renderModeStats(){
+    var list = document.getElementById("modeStatsList");
+    var data = aggregateBy(function(e){ return modeOf(e); });
+    if (!data.length){
+      list.innerHTML = '<div class="empty"><div class="big-icon">[ ∅ ]</div>Zatím žádná data.</div>';
+      return;
+    }
+    data.sort(function(a, b){ return MODE_IDS.indexOf(a.key) - MODE_IDS.indexOf(b.key); });
+    var src = viewEntries().slice().sort(function(a, b){ return a.ts - b.ts; });
+    var maxMatches = Math.max.apply(null, data.map(function(a){ return a.matches; })) || 1;
+    list.innerHTML = data.map(function(a){
+      var series = src.filter(function(e){ return modeOf(e) === a.key; }).map(function(e){ return kd(e.kills, e.deaths); });
+      var pct = Math.max(4, (a.matches / maxMatches) * 100);
+      var wr = a.winrate !== null ? a.winrate + "% výher" : "bez výsledků";
+      return '<div class="mode-row" data-mode="' + esc(a.key) + '" title="Zobrazit podrobný graf tohoto módu">' +
+        '<div class="mode-main"><div class="group-stat-name">' + esc(a.key) + '</div>' +
+        '<div class="group-stat-bar-track"><div class="group-stat-bar-fill" style="width:0%" data-w="' + pct + '%"></div></div></div>' +
+        '<div class="mode-spark">' + miniSpark(series, 150, 38) + '</div>' +
+        '<div class="lb-stat"><div class="big">' + a.matches + ' zápasů</div><div class="small">K/D ' + fmtKD(a.kd) + ' · ' + wr + '</div></div>' +
+      '</div>';
+    }).join("") + '<div class="mode-hint">Klikni na mód a uvidíš jeho podrobný graf K/D.</div>';
+    animateBars(list);
+    list.querySelectorAll(".mode-row").forEach(function(row){
+      row.addEventListener("click", function(){ showModeChart(row.dataset.mode); });
+    });
+  }
+  function showModeChart(mode){
+    state.modeFilter = mode;
+    document.getElementById("modeFilter").value = mode;
+    statsTab = "trend";
+    document.querySelectorAll("#statsTabChips [data-tab]").forEach(function(b){ b.classList.toggle("active", b.dataset.tab === "trend"); });
+    renderAll();
+  }
+  document.getElementById("statsFilterBadge").addEventListener("click", function(){
+    state.weaponFilter = ""; state.modeFilter = "";
+    document.getElementById("weaponFilter").value = "";
+    document.getElementById("modeFilter").value = "";
+    renderAll();
+  });
+
   function renderStatsTab(){
+    document.getElementById("statsMoreBtn").classList.toggle("active", ["classes", "sides", "compare"].indexOf(statsTab) !== -1);
     var badge = document.getElementById("statsFilterBadge");
-    if (state.weaponFilter){
-      badge.textContent = state.weaponFilter;
+    var chartLabel = [state.weaponFilter, state.modeFilter].filter(Boolean).join(" · ");
+    if (chartLabel){
+      badge.textContent = chartLabel + " ✕";
+      badge.title = "Zrušit filtr";
       badge.style.display = "inline";
     } else {
       badge.style.display = "none";
@@ -1903,7 +2075,7 @@
     if (statsTab === "trend") renderTrendChart();
     else if (statsTab === "maps") renderGroupStats("mapStatsList", aggregateBy(function(e){ return e.map; }));
     else if (statsTab === "classes") renderGroupStats("classStatsList", aggregateBy(function(e){ return e.class; }), ["Light","Medium","Heavy"]);
-    else if (statsTab === "modes") renderGroupStats("modeStatsList", aggregateBy(function(e){ return modeOf(e); }), MODE_IDS);
+    else if (statsTab === "modes") renderModeStats();
     else if (statsTab === "sides") renderGroupStats("sideStatsList", aggregateBy(function(e){ return e.side === "attack" ? "Útočníci" : (e.side === "defend" ? "Obránci" : null); }), ["Útočníci", "Obránci"]);
     else if (statsTab === "activity") renderHeatmap();
     else renderCompare();
@@ -1911,9 +2083,9 @@
   }
 
   document.getElementById("statsTabChips").addEventListener("click", function(ev){
-    var btn = ev.target.closest(".chip");
+    var btn = ev.target.closest("[data-tab]");
     if (!btn) return;
-    document.querySelectorAll("#statsTabChips .chip").forEach(function(c){ c.classList.remove("active"); });
+    document.querySelectorAll("#statsTabChips [data-tab]").forEach(function(c){ c.classList.remove("active"); });
     btn.classList.add("active");
     statsTab = btn.dataset.tab;
     renderStatsTab();
@@ -2004,7 +2176,8 @@
       return;
     }
     var maxVal = agg[0][sortKey] || 1;
-    agg.forEach(function(a, i){
+    var shown = agg.filter(function(a, i){ return state.lbAll || i < 5 || a.weapon === state.weaponFilter; });
+    shown.forEach(function(a){
       var row = document.createElement("div");
       row.className = "lb-row" + (state.weaponFilter === a.weapon ? " selected" : "");
       row.dataset.weapon = a.weapon;
@@ -2012,7 +2185,7 @@
       var statLabel = sortKey === "kd" ? "K/D" : (sortKey === "matches" ? "zápasy" : "killy");
       var statValue = sortKey === "kd" ? fmtKD(a.kd) : a[sortKey];
       row.innerHTML =
-        '<div class="lb-rank">'+String(i+1).padStart(2,"0")+'</div>'+
+        '<div class="lb-rank">'+String(agg.indexOf(a)+1).padStart(2,"0")+'</div>'+
         '<div class="lb-main">'+
           '<div class="lb-name-row"><span class="lb-name">'+esc(a.weapon)+'</span><span class="class-pill '+a.class+'">'+a.class+'</span></div>'+
           '<div class="lb-bar-track"><div class="lb-bar-fill" style="width:0%" data-w="'+pct+'%"></div></div>'+
@@ -2026,6 +2199,9 @@
       list.appendChild(row);
     });
     animateBars(list);
+    var moreWrap = document.getElementById("lbMoreWrap");
+    moreWrap.style.display = agg.length > 5 ? "block" : "none";
+    document.getElementById("lbMoreBtn").textContent = state.lbAll ? "Zobrazit méně" : "Zobrazit všechny (" + agg.length + ")";
   }
 
   // ---------- detail strip ----------
@@ -2089,6 +2265,8 @@
     var hiddenRows = Math.max(0, totalRows - state.shown);
     rows = rows.slice(0, state.shown);
     saveUi();
+    updateFiltersBadge();
+    document.querySelector(".table-wrap table").className = state.fullCols ? "table-full" : "table-compact";
     document.getElementById("moreWrap").style.display = hiddenRows ? "block" : "none";
     document.getElementById("moreBtn").textContent = "Zobrazit víc (zbývá " + hiddenRows + ")";
     document.getElementById("logCount").textContent = totalRows;
@@ -2119,22 +2297,26 @@
       var roundHtml = r.round
         ? '<span class="round-pill">Kolo '+r.round+'</span>'
         : '<span style="color:var(--text-dimmer)">—</span>';
+      var sideInline = r.side === "attack" ? '<span class="side-pill attack">Útok</span>' : (r.side === "defend" ? '<span class="side-pill defend">Obrana</span>' : "");
+      var roundInline = r.round ? '<span class="round-pill">Kolo '+r.round+'</span>' : "";
+      var stackInline = r.fullStack === "full" ? '<span class="stack-pill full">Full stack</span>' : (r.fullStack === "solo" ? '<span class="stack-pill solo">Solo/Duo</span>' : "");
+      var noteInline = r.note ? ' <span class="note-ind inline" translate="no" title="'+esc(r.note)+'">✎</span>' : "";
       tr.innerHTML =
-        '<td data-label="Zbraň">'+esc(r.weapon)+'</td>'+
-        '<td data-label="Třída"><span class="class-pill '+r.class+'">'+r.class+'</span></td>'+
-        '<td class="map-cell" data-label="Mód">'+esc(r.mode)+'</td>'+
-        '<td data-label="Strana">'+sideHtml+'</td>'+
+        '<td data-label="Zbraň"><i class="cdot '+r.class+' inline" title="'+r.class+'"></i>'+esc(r.weapon)+noteInline+'</td>'+
+        '<td class="col-x" data-label="Třída"><span class="class-pill '+r.class+'">'+r.class+'</span></td>'+
+        '<td class="map-cell" data-label="Mód">'+esc(r.mode)+((sideInline || roundInline) ? ' <span class="inline-pills inline">'+sideInline+roundInline+'</span>' : '')+'</td>'+
+        '<td class="col-x" data-label="Strana">'+sideHtml+'</td>'+
         '<td class="map-cell" data-label="Mapa">'+esc(r.map || "—")+'</td>'+
-        '<td data-label="Výsledek">'+resultHtml+'</td>'+
-        '<td data-label="Stack">'+stackHtml+'</td>'+
-        '<td data-label="Kolo">'+roundHtml+'</td>'+
+        '<td data-label="Výsledek">'+resultHtml+(stackInline ? ' <span class="inline-pills inline">'+stackInline+'</span>' : '')+'</td>'+
+        '<td class="col-x" data-label="Stack">'+stackHtml+'</td>'+
+        '<td class="col-x" data-label="Kolo">'+roundHtml+'</td>'+
         '<td class="num" data-label="Killy">'+r.kills+'</td>'+
         '<td class="num" data-label="Asisty">'+r.assists+'</td>'+
         '<td class="num" data-label="Smrti">'+r.deaths+'</td>'+
         '<td class="kd-cell" data-label="K/D">'+fmtKD(r.kd)+'</td>'+
         '<td class="date" data-label="Datum">'+fmtDate(r.ts)+'</td>'+
-        '<td class="num" data-label="Sezóna">S'+r.season+'</td>'+
-        '<td class="note-cell" data-label="Poznámka">'+(r.note ? '<span translate="no" title="'+esc(r.note)+'">'+esc(r.note)+'</span>' : '<span style="color:var(--text-dimmer)">—</span>')+'</td>'+
+        '<td class="col-x num" data-label="Sezóna">S'+r.season+'</td>'+
+        '<td class="col-x note-cell" data-label="Poznámka">'+(r.note ? '<span translate="no" title="'+esc(r.note)+'">'+esc(r.note)+'</span>' : '<span style="color:var(--text-dimmer)">—</span>')+'</td>'+
         '<td class="actions-cell"><div class="row-actions">'+
           '<button class="row-dup" data-id="'+r.id+'" title="Nový záznam se stejným nastavením">'+
             '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.5" y="4.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.3"/><path d="M9.5 2.5v-.2A.8.8 0 0 0 8.7 1.5H2.3a.8.8 0 0 0-.8.8v6.4a.8.8 0 0 0 .8.8h.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'+
@@ -2585,22 +2767,18 @@
   var TOUR_STEPS = [
     { selector:"#openAdd", title:"Přidat zápas", text:"Tady zadáš nový zápas nebo jedno kolo Cashoutu — zbraň, killy, asisty, smrti, mapu, výsledek i to, jestli jsi hrál ve full stacku. Zkratka: klávesa N. Ve formuláři uložíš přes Enter." },
     { selector:"#seasonSelect", title:"Sezóny", text:"Přepínej mezi sezónami nebo všemi dohromady. Když vyjde nová sezóna, zvol „+ Nová sezóna…“ — nové záznamy půjdou do ní a statistiky začnou od nuly. Odznaky se počítají za všechny sezóny dohromady." },
-    { selector:"#langBtn", title:"Jazyk", text:"Přepni appku mezi češtinou a angličtinou." },
+    { selector:"#menuBtn", title:"Nastavení a nástroje", text:"Tady najdeš přepínač jazyka (CZ / EN), světlý a tmavý režim, tutoriál, klávesové zkratky a zálohování dat (export, import, CSV)." },
     { selector:"#accountBtn", title:"Účet a cloud", text:"Po přihlášení se tvoje data ukládají do cloudu a uvidíš je na mobilu i na PC. Tečka na ikoně ukazuje stav: zelená = uloženo, oranžová = ukládám, červená = chyba." },
-    { selector:"#themeToggle", title:"Světlý / tmavý režim", text:"Přepneš appku mezi tmavým a světlým vzhledem, podle toho, co ti víc sedí." },
     { selector:".hero", title:"Celkový přehled", text:"Součet za vybranou sezónu — počet zápasů, killy, asisty, smrti, poměr výher a celkové K/D." },
     { selector:"#statsTabChips", title:"Statistika", text:"Přepínáním záložek uvidíš trend K/D v čase, výkon podle mapy nebo podle třídy zbraně (Light / Medium / Heavy)." },
     { selector:"#shareBtn2", title:"Sdílení", text:"Vytvoř hezkou kartu se svými statistikami jako obrázek — stáhni ji, zkopíruj nebo ji pošli rovnou na Discord." },
     { selector:"#highlightRow", title:"Rychlé přehledy", text:"Tvůj nejlepší zápas, aktuální série výher/proher a nejhranější mapa na jeden pohled." },
     { selector:"#lbSortChips", title:"Žebříček zbraní", text:"Zbraně seřazené podle killů, K/D nebo počtu zápasů. Klikni na zbraň v seznamu a vyfiltruješ jí historii i graf." },
-    { selector:"#classChips", title:"Filtr podle třídy", text:"Zobrazí jen zápasy s Light, Medium nebo Heavy zbraněmi." },
-    { selector:"#weaponFilter", title:"Filtr podle zbraně", text:"Vyber konkrétní zbraň a v tabulce níž uvidíš jen její zápasy." },
-    { selector:"#modeFilter", title:"Filtr podle módu", text:"Přepni mezi Cashoutem, Point Breakem, Power Shiftem a dalšími módy. Statistiku podle módu najdeš i v záložce „Podle módu“." },
-    { selector:"#searchInput", title:"Hledání a období", text:"Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Vedle je filtr podle období. Tvoje filtry a řazení si appka pamatuje." },
+    { selector:"#searchInput", title:"Hledání a období", text:"Hledej podle zbraně, mapy, módu nebo poznámky (klávesa /). Tvoje filtry a řazení si appka pamatuje." },
+    { selector:"#filtersBtn", title:"Filtry", text:"Tady zúžíš historii podle třídy zbraně, výsledku, mapy, módu, období nebo konkrétní zbraně. Číslo u tlačítka ukazuje, kolik filtrů je zapnutých." },
     { selector:"#logHeading", title:"Historie zápasů", text:"Kompletní seznam zápasů a kol. Na počítači jde kliknutím na hlavičku sloupce seřadit podle killů, K/D, data a dalších." },
     { selector:".row-actions", title:"Úprava a mazání", text:"Dva čtverečky udělají nový záznam se stejným nastavením, tužka záznam upraví a koš ho smaže (chvíli můžeš kliknout na „Vrátit zpět“). Funguje u každého řádku zvlášť." },
     { selector:"#badgesGrid", title:"Odznaky", text:"Splň herní výzvy — třeba 5 výher v řadě, 100 killů, nebo zahraj všechny mapy. Splněné se rozzáří, u ostatních vidíš průběh." },
-    { selector:".footer-actions", title:"Záloha dat", text:"Data žijí jen v tomhle prohlížeči. Export stáhne zálohu do souboru, Import ji načte zpět (třeba v jiném prohlížeči) a jen doplní chybějící záznamy." }
   ];
   var tourIndex = 0;
   var tourActive = false;
@@ -3662,6 +3840,58 @@
   document.getElementById("shareBtn").addEventListener("click", openShare);
   document.getElementById("shareBtn2").addEventListener("click", openShare);
 
+  // ---------- popover menus ----------
+  function closeMenus(){
+    document.querySelectorAll(".menu").forEach(function(m){ m.hidden = true; });
+    document.getElementById("menuBtn").setAttribute("aria-expanded", "false");
+  }
+  function toggleMenu(btn, menu){
+    var open = menu.hidden;
+    closeMenus();
+    menu.hidden = !open;
+    if (btn.hasAttribute("aria-expanded")) btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  document.getElementById("menuBtn").addEventListener("click", function(){ toggleMenu(this, document.getElementById("mainMenu")); });
+  document.getElementById("statsMoreBtn").addEventListener("click", function(){ toggleMenu(this, document.getElementById("statsMoreMenu")); });
+  document.addEventListener("click", function(ev){
+    if (!ev.target.closest(".menu-wrap") || ev.target.closest(".menu-item")) closeMenus();
+  });
+  document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeMenus(); });
+
+  // ---------- filters panel ----------
+  function activeFilterCount(){
+    return (state.classFilter !== "All" ? 1 : 0) + (state.resultFilter ? 1 : 0) + (state.mapFilter ? 1 : 0) +
+      (state.modeFilter ? 1 : 0) + (state.range ? 1 : 0) + (state.weaponFilter ? 1 : 0);
+  }
+  function updateFiltersBadge(){
+    var n = activeFilterCount();
+    var badge = document.getElementById("filtersCount");
+    badge.textContent = n ? String(n) : "";
+    document.getElementById("filtersBtn").classList.toggle("active", n > 0);
+    document.getElementById("clearFiltersBtn").style.display = n ? "" : "none";
+  }
+  document.getElementById("filtersBtn").addEventListener("click", function(){
+    var panel = document.getElementById("filtersPanel");
+    panel.hidden = !panel.hidden;
+    this.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
+  });
+  document.getElementById("clearFiltersBtn").addEventListener("click", function(){
+    state.classFilter = "All"; state.resultFilter = ""; state.mapFilter = ""; state.modeFilter = ""; state.range = ""; state.weaponFilter = "";
+    document.querySelectorAll("#classChips .chip").forEach(function(b){ b.classList.toggle("active", b.dataset["class"] === "All"); });
+    document.querySelectorAll("#resultFilterChips .chip").forEach(function(b){ b.classList.toggle("active", b.dataset.result === ""); });
+    ["mapFilter", "modeFilter", "rangeFilter", "weaponFilter"].forEach(function(id){ document.getElementById(id).value = ""; });
+    renderAll();
+  });
+  document.getElementById("colsBtn").addEventListener("click", function(){
+    state.fullCols = !state.fullCols;
+    this.classList.toggle("active", state.fullCols);
+    renderTable();
+  });
+  document.getElementById("lbMoreBtn").addEventListener("click", function(){
+    state.lbAll = !state.lbAll;
+    renderLeaderboard();
+  });
+
   // ---------- extra filters, pagination, mobile add button ----------
   (function(){
     var opts = MODES.map(function(m){ return '<option value="' + esc(m.id) + '">' + esc(m.id) + '</option>'; }).join("");
@@ -3749,17 +3979,18 @@
   });
 
   loadUi();
+  if (activeFilterCount() > 0) document.getElementById("filtersPanel").hidden = false;
   var resizeTimer = null;
   window.addEventListener("resize", function(){
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function(){ if (statsTab === "trend") renderTrendChart(); else if (statsTab === "activity") renderHeatmap(); }, 180);
+    resizeTimer = setTimeout(function(){ if (statsTab === "trend") renderTrendChart(true); else if (statsTab === "activity") renderHeatmap(); }, 180);
   });
   document.querySelectorAll(".wrap > header, .wrap > .login-bar, .wrap > section, .wrap > .grid > section, .wrap > .footer-actions, .wrap > footer").forEach(function(el, i){
     el.style.setProperty("--i", i);
     el.classList.add("reveal");
   });
   document.documentElement.lang = LANG;
-  document.getElementById("langBtn").textContent = LANG === "en" ? "EN" : "CZ";
+  document.getElementById("langCode").textContent = LANG === "en" ? "EN" : "CZ";
   if (LANG === "en") trTree(document.body);
   renderAll();
   cloudStart();
